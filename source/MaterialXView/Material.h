@@ -42,6 +42,11 @@ class Material
         return std::make_shared<Material>();
     }
 
+    
+    static size_t createMaterialFromPreset(mx::DocumentPtr destinationDoc, std::string materialPreset,
+        mx::DocumentPtr libraries, const DocumentModifiers& modifiers,
+        std::vector<MaterialPtr>& materials);
+
     /// Load a document on disk containing renderable materials into an existing document
     /// and create new materials if they do not already exist.
     /// Returns the number of new materials added

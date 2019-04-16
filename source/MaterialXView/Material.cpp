@@ -9,6 +9,8 @@
 
 #include <nanogui/messagedialog.h>
 
+#include <assetloader.h>
+
 #include <iostream>
 
 using MatrixXfProxy = Eigen::Map<const ng::MatrixXf>;
@@ -26,6 +28,154 @@ bool stringEndsWith(const std::string& str, std::string const& end)
     }
 }
 
+
+MaterialX::MaterialPtr test_adskLib(mx::DocumentPtr document, std::string preset_name)
+{
+
+    assetloader loader;
+    
+    //std::string preset_name = "Prism-034";
+    MaterialX::Color4 surface_albedo;
+    MaterialX::Color4 metal_f0;
+    float surface_roughness;
+    std::string autodesk_advanced_material_library_path = "f:/ProteinContent/assetlibrary_advanced.adsklib";
+    bool result = loader.load_asset(autodesk_advanced_material_library_path, preset_name, surface_albedo, metal_f0, surface_roughness);
+
+    MaterialX::MaterialPtr preset_material = nullptr;
+    if (result)
+    {
+        preset_material = loader.convertPrismMetalToStandardSurface(document, preset_name, surface_albedo, metal_f0, surface_roughness);
+    }
+
+    return preset_material;
+}
+
+// Create Material from Preset
+size_t Material::createMaterialFromPreset(mx::DocumentPtr destinationDoc, std::string materialPreset,
+    mx::DocumentPtr libraries, const DocumentModifiers& modifiers,
+    std::vector<MaterialPtr>& materials)
+{
+
+    // Load the content document.
+    mx::DocumentPtr doc = mx::createDocument();
+    
+    if (test_adskLib(doc, materialPreset))
+        OutputDebugString("Created Material from PRESET!");
+
+ 
+    // Apply modifiers to the content document if requested.
+    for (mx::ElementPtr elem : doc->traverseTree())
+    {
+        if (modifiers.remapElements.count(elem->getCategory()))
+        {
+            elem->setCategory(modifiers.remapElements.at(elem->getCategory()));
+        }
+        if (modifiers.remapElements.count(elem->getName()))
+        {
+            elem->setName(modifiers.remapElements.at(elem->getName()));
+        }
+        mx::StringVec attrNames = elem->getAttributeNames();
+        for (const std::string& attrName : attrNames)
+        {
+            if (modifiers.remapElements.count(elem->getAttribute(attrName)))
+            {
+                elem->setAttribute(attrName, modifiers.remapElements.at(elem->getAttribute(attrName)));
+            }
+        }
+        if (elem->hasFilePrefix() && !modifiers.filePrefixTerminator.empty())
+        {
+            std::string filePrefix = elem->getFilePrefix();
+            if (!stringEndsWith(filePrefix, modifiers.filePrefixTerminator))
+            {
+                elem->setFilePrefix(filePrefix + modifiers.filePrefixTerminator);
+            }
+        }
+        std::vector<mx::ElementPtr> children = elem->getChildren();
+        for (mx::ElementPtr child : children)
+        {
+            if (modifiers.skipElements.count(child->getCategory()) ||
+                modifiers.skipElements.count(child->getName()))
+            {
+                elem->removeChild(child->getName());
+            }
+        }
+    }
+
+    // Import the given libraries.
+    mx::CopyOptions copyOptions;
+    copyOptions.skipDuplicateElements = true;
+    doc->importLibrary(libraries, &copyOptions);
+
+    // Remap references to unimplemented shader nodedefs.
+    for (mx::MaterialPtr material : doc->getMaterials())
+    {
+        for (mx::ShaderRefPtr shaderRef : material->getShaderRefs())
+        {
+            mx::NodeDefPtr nodeDef = shaderRef->getNodeDef();
+            if (nodeDef && !nodeDef->getImplementation())
+            {
+                std::vector<mx::NodeDefPtr> altNodeDefs = doc->getMatchingNodeDefs(nodeDef->getNodeString());
+                for (mx::NodeDefPtr altNodeDef : altNodeDefs)
+                {
+                    if (altNodeDef->getImplementation())
+                    {
+                        shaderRef->setNodeDefString(altNodeDef->getName());
+                    }
+                }
+            }
+        }
+    }
+
+    // Find new renderable elements.
+    size_t previousMaterialCount = materials.size();
+    mx::StringVec renderablePaths;
+    std::vector<mx::TypedElementPtr> elems;
+    mx::findRenderableElements(doc, elems);
+    for (mx::TypedElementPtr elem : elems)
+    {
+        std::string namePath = elem->getNamePath();
+        // Skip adding if renderable already exists
+        if (!destinationDoc->getDescendant(namePath))
+        {
+            renderablePaths.push_back(namePath);
+        }
+    }
+
+    // Check for any udim set.
+    mx::ValuePtr udimSetValue = doc->getGeomAttrValue("udimset");
+
+    // Merge the content document into the destination document.
+    destinationDoc->importLibrary(doc, &copyOptions);
+
+    // Create new materials.
+    for (auto renderablePath : renderablePaths)
+    {
+        auto elem = destinationDoc->getDescendant(renderablePath)->asA<mx::TypedElement>();
+        if (!elem)
+        {
+            continue;
+        }
+        if (udimSetValue && udimSetValue->isA<mx::StringVec>())
+        {
+            for (const std::string& udim : udimSetValue->asA<mx::StringVec>())
+            {
+                MaterialPtr mat = Material::create();
+                mat->setElement(elem);
+                mat->setUdim(udim);
+                materials.push_back(mat);
+            }
+        }
+        else
+        {
+            MaterialPtr mat = Material::create();
+            mat->setElement(elem);
+            materials.push_back(mat);
+        }
+    }
+
+    return (materials.size() - previousMaterialCount);
+}
+
 //
 // Material methods
 //
@@ -34,6 +184,8 @@ size_t Material::loadDocument(mx::DocumentPtr destinationDoc, const mx::FilePath
                               mx::DocumentPtr libraries, const DocumentModifiers& modifiers,
                               std::vector<MaterialPtr>& materials)
 {
+    
+    
     // Load the content document.
     mx::DocumentPtr doc = mx::createDocument();
     mx::XmlReadOptions readOptions;
@@ -52,6 +204,10 @@ size_t Material::loadDocument(mx::DocumentPtr destinationDoc, const mx::FilePath
             new ng::MessageDialog(nullptr, ng::MessageDialog::Type::Warning, "Include file not found:", filename);
         }
     };
+
+    //if (test_adskLib(doc))
+    //    OutputDebugString("Created Material from PRESET!");
+    
     mx::readFromXmlFile(doc, filePath, mx::EMPTY_STRING, &readOptions);
 
     // Apply modifiers to the content document if requested.

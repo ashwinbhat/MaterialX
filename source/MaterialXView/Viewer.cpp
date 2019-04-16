@@ -120,7 +120,8 @@ Viewer::Viewer(const mx::StringVec& libraryFolders,
     _assignLooks(false),
     _outlineSelection(false),
     _envSamples(DEFAULT_ENV_SAMPLES),
-    _captureFrame(false)
+    _captureFrame(false),
+    _presetName()
 {
     _window = new ng::Window(this, "Viewer Options");
     _window->setPosition(ng::Vector2i(15, 15));
@@ -128,6 +129,9 @@ Viewer::Viewer(const mx::StringVec& libraryFolders,
 
     createLoadMeshInterface(_window, "Load Mesh");
     createLoadMaterialsInterface(_window, "Load Material");
+    
+    createMaterialPresetInterface(_window, "Load Preset");
+    
 
     ng::Button* editorButton = new ng::Button(_window, "Property Editor");
     editorButton->setFlags(ng::Button::ToggleButton);
@@ -207,6 +211,7 @@ Viewer::Viewer(const mx::StringVec& libraryFolders,
 
     try
     {
+        //TODO: Make document from Preset
         Material::loadDocument(_doc, _searchPath.find(_materialFilename), _stdLib, _modifiers, _materials);
         updateMaterialSelections();
         setMaterialSelection(0);
@@ -396,6 +401,70 @@ void Viewer::createLoadMeshInterface(Widget* parent, const std::string label)
             }
         }
         mProcessEvents = true;
+    });
+}
+void Viewer::createMaterialPresetInterface(Widget* parent, const std::string label)
+{
+    ng::Button* materialButton = new ng::Button(parent, label);
+    materialButton->setIcon(ENTYPO_ICON_FOLDER);
+    materialButton->setCallback([this]()
+    {
+        mProcessEvents = false;
+        std::string filename = ng::file_dialog({ { "png", "Preset" } }, false);
+        if (!filename.empty())
+        {
+            //This is a temporary hack to use something like "F:\ProteinContent\assetlibrary_advanced.fbm\Mats\PrismMetal\Presets\t_Prism-033.png" to define preset name
+            //We convert it to Prism-033
+            std::size_t pos = filename.find("Prism-");
+            std::string prism_name = filename.substr(pos);
+            pos = prism_name.find_last_of(".");
+            _presetName = prism_name.substr(0, pos);
+        }
+
+    if (!_presetName.empty())
+    {
+        try
+        {
+            if (!_mergeMaterials)
+            {
+                initializeDocument(_stdLib);
+            }
+            
+            size_t newRenderables = Material::createMaterialFromPreset(_doc, _presetName, _stdLib, _modifiers, _materials);
+            if (newRenderables > 0)
+            {
+                updateMaterialSelections();
+
+                // Clear cached implementations in case a nodedef 
+                // or nodegraph has changed on disc.
+                _genContext.clearNodeImplementations();
+
+                mx::MeshPtr mesh = _geometryHandler->getMeshes()[0];
+                for (auto m : _materials)
+                {
+                    m->generateShader(_genContext);
+                    if (mesh)
+                    {
+                        m->bindMesh(mesh);
+                    }
+                }
+                if (!_mergeMaterials)
+                {
+                    setMaterialSelection(0);
+                    if (!_materials.empty())
+                    {
+                        assignMaterial(_materials[0]);
+                    }
+                }
+            }
+        }
+        catch (std::exception& e)
+        {
+            new ng::MessageDialog(this, ng::MessageDialog::Type::Warning, "Material Assignment Error", e.what());
+        }
+    }
+
+    mProcessEvents = true;
     });
 }
 
