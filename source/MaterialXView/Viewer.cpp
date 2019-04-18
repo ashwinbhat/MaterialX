@@ -88,11 +88,11 @@ mx::DocumentPtr loadLibraries(const mx::StringVec& libraryFolders, const mx::Fil
 //
 
 Viewer::Viewer(const mx::StringVec& libraryFolders,
-               const mx::FileSearchPath& searchPath,
-               const std::string meshFilename,
-               const std::string materialFilename,
-               const DocumentModifiers& modifiers,
-               int multiSampleCount) :
+    const mx::FileSearchPath& searchPath,
+    const std::string meshFilename,
+    const std::string materialFilename,
+    const DocumentModifiers& modifiers,
+    int multiSampleCount) :
     ng::Screen(ng::Vector2i(1280, 960), "MaterialXView",
         true, false,
         8, 8, 24, 8,
@@ -120,8 +120,7 @@ Viewer::Viewer(const mx::StringVec& libraryFolders,
     _assignLooks(false),
     _outlineSelection(false),
     _envSamples(DEFAULT_ENV_SAMPLES),
-    _captureFrame(false),
-    _presetName()
+    _captureFrame(false)
 {
     _window = new ng::Window(this, "Viewer Options");
     _window->setPosition(ng::Vector2i(15, 15));
@@ -129,9 +128,10 @@ Viewer::Viewer(const mx::StringVec& libraryFolders,
 
     createLoadMeshInterface(_window, "Load Mesh");
     createLoadMaterialsInterface(_window, "Load Material");
-    
+
+#ifdef _ADSK_MATERIALS
     createMaterialPresetInterface(_window, "Load Preset");
-    
+#endif
 
     ng::Button* editorButton = new ng::Button(_window, "Property Editor");
     editorButton->setFlags(ng::Button::ToggleButton);
@@ -403,6 +403,7 @@ void Viewer::createLoadMeshInterface(Widget* parent, const std::string label)
         mProcessEvents = true;
     });
 }
+#ifdef _ADSK_MATERIALS
 void Viewer::createMaterialPresetInterface(Widget* parent, const std::string label)
 {
     ng::Button* materialButton = new ng::Button(parent, label);
@@ -467,6 +468,7 @@ void Viewer::createMaterialPresetInterface(Widget* parent, const std::string lab
     mProcessEvents = true;
     });
 }
+#endif //_ADSK_MATERIALS
 
 void Viewer::createLoadMaterialsInterface(Widget* parent, const std::string label)
 {

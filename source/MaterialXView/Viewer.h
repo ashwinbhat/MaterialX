@@ -81,7 +81,6 @@ class Viewer : public ng::Screen
 
     void createLoadMeshInterface(Widget* parent, const std::string label);
     void createLoadMaterialsInterface(Widget* parent, const std::string label);
-    void createMaterialPresetInterface(Widget* parent, const std::string label);
     void createAdvancedSettings(Widget* parent);
 
   private:
@@ -131,7 +130,6 @@ class Viewer : public ng::Screen
     ng::Label* _materialLabel;
     ng::ComboBox* _materialSelectionBox;
     PropertyEditor _propertyEditor;
-    std::string _presetName;
 
     // Material assignments
     std::map<mx::MeshPartitionPtr, MaterialPtr> _materialAssignments;
@@ -158,6 +156,16 @@ class Viewer : public ng::Screen
     // Image save
     bool _captureFrame;
     mx::FilePath _captureFrameFileName;
+
+#ifdef _ADSK_MATERIALS
+private:
+    void createMaterialPresetInterface(Widget* parent, const std::string label);
+
+private:
+    std::string _presetName;
+
+#endif
+
 };
 
 #endif // MATERIALXVIEW_VIEWER_H

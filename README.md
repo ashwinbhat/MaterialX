@@ -39,3 +39,6 @@ Use of this code is subject to the terms of the Autodesk license agreement provi
 ### Additional Resources
 
 - The [Developer Guide](http://www.materialx.org/docs/api/index.html) contains more detailed documentation and code examples in C++ and Python.
+
+### Asset Loader
+cmake -H. -Bbuild -DMATERIALX_VIEWER_MATASSET_LOADER:PATH="F:/source/MaterialX-bhata/assetloaderLib" -G "Visual Studio 15 2017 Win64"

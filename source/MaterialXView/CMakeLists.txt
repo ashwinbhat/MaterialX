@@ -50,7 +50,7 @@ target_link_libraries(
     MaterialXGenGlsl
     MaterialXRenderGlsl
     nanogui
-    ${NANOGUI_EXTRA_LIBS})
+    ${NANOGUI_EXTRA_LIBS} )
 
 add_custom_command(TARGET MaterialXView POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -68,4 +68,25 @@ install(TARGETS MaterialXView
         DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/MaterialXView.pdb"
         DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/" OPTIONAL)
+
+        
+#Add Asset Loader Support
+if (IS_DIRECTORY ${MATERIALX_VIEWER_MATASSET_LOADER})
+    set(ASSET_LOADER_INCLUDE ${MATERIALX_VIEWER_MATASSET_LOADER}/include)
+    set(ASSET_LOADER_DEFINES _ADSK_MATERIALS)
+    set(ASSET_LOADER_DEBUG_LIB ${MATERIALX_VIEWER_MATASSET_LOADER}/lib/assetloaderd.lib)
+    set(ASSET_LOADER_RELEASE_LIB ${MATERIALX_VIEWER_MATASSET_LOADER}/lib/assetloader.lib)
+	
+	include_directories(${ASSET_LOADER_INCLUDE})
+	add_definitions(-D${ASSET_LOADER_DEFINES})
+    target_link_libraries(
+        MaterialXView
+        debug ${ASSET_LOADER_DEBUG_LIB}
+        optimized ${ASSET_LOADER_RELEASE_LIB} )
+    add_custom_command(TARGET MaterialXView POST_BUILD
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+       ${MATERIALX_VIEWER_MATASSET_LOADER}/bin ${CMAKE_CURRENT_BINARY_DIR})
+    install(FILES ${MATERIALX_VIEWER_MATASSET_LOADER}/bin/*
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+endif()
 

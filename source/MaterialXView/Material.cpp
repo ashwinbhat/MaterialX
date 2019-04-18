@@ -9,8 +9,9 @@
 
 #include <nanogui/messagedialog.h>
 
-#include <assetloader.h>
-
+#ifdef _ADSK_MATERIALS
+    #include <assetloader.h>
+#endif
 #include <iostream>
 
 using MatrixXfProxy = Eigen::Map<const ng::MatrixXf>;
@@ -28,7 +29,7 @@ bool stringEndsWith(const std::string& str, std::string const& end)
     }
 }
 
-
+#ifdef _ADSK_MATERIALS
 MaterialX::MaterialPtr test_adskLib(mx::DocumentPtr document, std::string preset_name)
 {
 
@@ -175,6 +176,9 @@ size_t Material::createMaterialFromPreset(mx::DocumentPtr destinationDoc, std::s
 
     return (materials.size() - previousMaterialCount);
 }
+#endif // _ADSK_MATERIALS
+
+
 
 //
 // Material methods

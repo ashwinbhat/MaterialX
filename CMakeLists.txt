@@ -57,12 +57,15 @@ set(MATERIALX_OIIO_DIR "" CACHE PATH "Path to the root folder of the OpenImageIO
 mark_as_advanced(MATERIALX_OIIO_DIR)
 option(MATERIALX_BUILD_CONTRIB "Build contribution folder." OFF)
 mark_as_advanced(MATERIALX_BUILD_CONTRIB)
-
+set(MATERIALX_VIEWER_MATASSET_LOADER "" CACHE PATH "Path to the root folder of the Adsk Asset Loader")
+mark_as_advanced(MATERIALX_VIEWER_MATASSET_LOADER)
+set(ADSK_MATERIALLIBRARY_DIR "" CACHE PATH "Path to the root folder of the Autodesk Material Library")
+mark_as_advanced(ADSK_MATERIALLIBRARY_DIR)
 # Viewer building option. If viewer is desired then we require
 # render and GLSL modules.
 option(MATERIALX_BUILD_VIEWER "Build the MaterialX Sample Viewer. " ON)
 if (MATERIALX_BUILD_VIEWER)
-    set( MATERIALX_BUILD_RENDER ON)
+    set (MATERIALX_BUILD_RENDER ON)
     set (MATERIALX_BUILD_RENDERGLSL ON)
 endif()
 
