@@ -82,7 +82,7 @@ class Material : public Element
     /// @param node An optional node string, which should match the node
     ///     attribute of the NodeDef to be referenced.
     /// @return A shared pointer to the new ShaderRef.
-    ShaderRefPtr addShaderRef(const string& name = EMPTY_STRING,
+    ShaderRefPtr  addShaderRef(const string& name = EMPTY_STRING,
                               const string& node = EMPTY_STRING);
 
     /// Return the ShaderRef, if any, with the given name.
