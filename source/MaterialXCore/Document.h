@@ -503,6 +503,28 @@ class Document : public GraphElement
     }
 
     /// @}
+    /// @name Unit settings
+    /// @{
+
+    /// Set the units string.
+    void setUnit(const string& unit)
+    {
+        setAttribute(UNIT_ATTRIBUTE, unit);
+    }
+
+    /// Return true if a unit string has been set.
+    bool hasUnit() const
+    {
+        return hasAttribute(UNIT_ATTRIBUTE);
+    }
+
+    /// Return the units to be used.
+    const string& getUnit() const
+    {
+        return getAttribute(UNIT_ATTRIBUTE);
+    }
+
+    /// @}
     /// @name Validation
     /// @{
 
@@ -559,6 +581,7 @@ class Document : public GraphElement
     static const string CATEGORY;
     static const string CMS_ATTRIBUTE;
     static const string CMS_CONFIG_ATTRIBUTE;
+    static const string UNIT_ATTRIBUTE;
 
   private:
     class Cache;

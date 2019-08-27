@@ -15,6 +15,9 @@ namespace MaterialX
 const string Document::CMS_ATTRIBUTE = "cms";
 const string Document::CMS_CONFIG_ATTRIBUTE = "cmsconfig";
 
+const string Document::UNIT_ATTRIBUTE = "unit";
+
+
 namespace {
 
 const string DOCUMENT_VERSION_STRING = std::to_string(MATERIALX_MAJOR_VERSION) + "." +
