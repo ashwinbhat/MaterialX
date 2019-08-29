@@ -59,7 +59,20 @@ TEST_CASE("Units", "[units]")
             if (elem->isA<mx::Input>())
             {
                 std::cout << "Input: " << elem->getName() << std::endl;
-                std::cout << "\t Attributes: " << elem->getAttribute() << std::endl;
+                for (const std::string& attrName : elem->getAttributeNames()) {
+                    std::cout << "\t Attributes: " << attrName << std::endl;
+                }
+                //std::cout << "\t Attributes: " << elem->getAttribute() << std::endl;
+                valueElementCount++;
+            }
+
+            if (elem->isA<mx::Parameter>())
+            {
+                std::cout << "Input: " << elem->getName() << std::endl;
+                for (const std::string& attrName : elem->getAttributeNames()) {
+                    std::cout << "\t Attributes: " << attrName << std::endl;
+                }
+                //std::cout << "\t Attributes: " << elem->getAttribute() << std::endl;
                 valueElementCount++;
             }
         }
