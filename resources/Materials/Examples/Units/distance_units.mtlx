@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <materialx version="1.37" unit="ft, rad">
- 
+
 <!-- scale -->
+<constant name="realscale" type="float">
+   <parameter name="value" type="float" value="1.25" unit="m" />
+</constant>
+
+  <!-- scale -->
 <constant name="albedo_realworldscale" type="vector2">
       <parameter name="value" type="vector2" value="0.25, 0.25" unit="m" />
 </constant>

@@ -56,25 +56,86 @@ TEST_CASE("Units", "[units]")
         int valueElementCount = 0;
         for (mx::ElementPtr elem : doc->traverseTree())
         {
+            // If we have nodes with inputs
+            mx::NodePtr pNode = elem->asA<mx::Node>();
+            if (pNode) 
+            {
+                std::string category = pNode->getCategory();
+                std::cout << "category:" << category << std::endl;
+
+                if (pNode->getInputCount()) {
+                    for (mx::InputPtr input : pNode->getInputs()) {
+                        std::cout << "input_name: " << input->getName() << std::endl
+                            << "input_type: " << input->getType() << std::endl
+                            << "input_value: " << input->getValueString() << std::endl;
+
+                    }
+                }
+            
+                if (pNode->getParameterCount()) {
+                    for (mx::ParameterPtr param: pNode->getParameters()) {
+                        std::cout << "param_name: " << param->getName() << std::endl
+                            << "param_type: " << param->getType() << std::endl
+                            << "param_value: " << param->getValueString() << std::endl;
+
+                    }
+                }
+            }
+/*
+            if (elem->isA<mx::Node>("image"))
+            {
+                
+                mx::ParameterPtr param = elem->asA<mx::Node>()->getParameter("file");
+                if (param){
+                    std::string imgfile = param->getValueString();
+                    std::cout << "Image node " << elem->getName() <<
+                        " references " << imgfile << std::endl;
+                    valueElementCount++;
+                }
+            }
+*/
+#if 0
             if (elem->isA<mx::Input>())
             {
-                std::cout << "Input: " << elem->getName() << std::endl;
-                for (const std::string& attrName : elem->getAttributeNames()) {
-                    std::cout << "\t Attributes: " << attrName << std::endl;
+                if (elem->hasAttribute("unit"))
+                {
+                    
+                    mx::Vector2 paramvalue = elem->getTypedAttribute<mx::Vector2>("value");
+                    
+                    std::cout << elem->getCategory() << " has Units: " << elem->getAttribute("unit") << " Value: " << paramvalue[0] << std::endl;
                 }
+                else
+                    std::cout << elem->getCategory() << " is Unitless" << std::endl;
+
+                //std::cout << "Input: " << elem->getName() << std::endl;
+                //for (const std::string& attrName : elem->getAttributeNames()) {
+                //    std::cout << "\t Attributes: " << attrName << std::endl;
+                //}
                 //std::cout << "\t Attributes: " << elem->getAttribute() << std::endl;
                 valueElementCount++;
             }
 
             if (elem->isA<mx::Parameter>())
             {
-                std::cout << "Input: " << elem->getName() << std::endl;
-                for (const std::string& attrName : elem->getAttributeNames()) {
-                    std::cout << "\t Attributes: " << attrName << std::endl;
+                //std::cout << "Input: " << elem->getName() << std::endl;
+                //for (const std::string& attrName : elem->getAttributeNames()) {
+                //    std::cout << "\t Attributes: " << attrName << std::endl;
+                std::cout << elem->getAttribute("type") << std::endl;
+
+                
+
+                if (elem->hasAttribute("unit")) {
+                    mx::Vector2 paramvalue = elem->getTypedAttribute<mx::Vector2>("value");
+                    std::cout << elem->getCategory() << " has Units: " << elem->getAttribute("unit") << " Value: " << paramvalue[0] << std::endl;
                 }
+                else
+                    std::cout << elem->getCategory() << " is Unitless" << std::endl;
+
+                //}
                 //std::cout << "\t Attributes: " << elem->getAttribute() << std::endl;
                 valueElementCount++;
             }
+#endif 
         }
         REQUIRE(valueElementCount > 0);
 
