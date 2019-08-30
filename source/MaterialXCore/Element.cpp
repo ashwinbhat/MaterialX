@@ -22,6 +22,7 @@ const string Element::DEFAULT_VERSION_ATTRIBUTE = "isdefaultversion";
 const string Element::INHERIT_ATTRIBUTE = "inherit";
 const string Element::NAMESPACE_ATTRIBUTE = "namespace";
 const string TypedElement::TYPE_ATTRIBUTE = "type";
+const string TypedElement::UNIT_ATTRIBUTE = "unit";
 const string ValueElement::VALUE_ATTRIBUTE = "value";
 const string ValueElement::INTERFACE_NAME_ATTRIBUTE = "interfacename";
 const string ValueElement::ENUM_ATTRIBUTE = "enum";
@@ -33,6 +34,7 @@ const string ValueElement::UI_FOLDER_ATTRIBUTE = "uifolder";
 const string ValueElement::UI_MIN_ATTRIBUTE = "uimin";
 const string ValueElement::UI_MAX_ATTRIBUTE = "uimax";
 const string ValueElement::UI_ADVANCED_ATTRIBUTE = "uiadvanced";
+
 
 Element::CreatorMap Element::_creatorMap;
 

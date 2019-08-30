@@ -69,6 +69,8 @@ TEST_CASE("Units", "[units]")
                             << "input_type: " << input->getType() << std::endl
                             << "input_value: " << input->getValueString() << std::endl;
 
+                        if (input->hasUnit())
+                            std::cout << "input_unit_type: " << input->getUnit() << std::endl;
                     }
                 }
             
@@ -78,6 +80,8 @@ TEST_CASE("Units", "[units]")
                             << "param_type: " << param->getType() << std::endl
                             << "param_value: " << param->getValueString() << std::endl;
 
+                        if (param->hasUnit())
+                            std::cout << "param_unit_type: " << param->getUnit() << std::endl;
                     }
                 }
             }
