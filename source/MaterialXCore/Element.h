@@ -929,6 +929,26 @@ class TypedElement : public Element
     }
 
     /// @}
+    /// @name Unit String
+
+    /// Set the element's unit type string.
+    void setUnit(const string& unit)
+    {
+        setAttribute(UNIT_ATTRIBUTE, unit);
+    }
+
+    /// Return true if the given element has a unit attribute.
+    bool hasUnit() const
+    {
+        return hasAttribute(UNIT_ATTRIBUTE);
+    }
+
+    /// Return the element's unit string.
+    const string& getUnit() const
+    {
+        return getAttribute(UNIT_ATTRIBUTE);
+    }
+    /// @}
     /// @name TypeDef References
     /// @{
 
@@ -940,6 +960,7 @@ class TypedElement : public Element
 
 public:
     static const string TYPE_ATTRIBUTE;
+    static const string UNIT_ATTRIBUTE;
 };
 
 /// @class ValueElement
