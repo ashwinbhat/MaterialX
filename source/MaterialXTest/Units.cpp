@@ -7,6 +7,8 @@
 #include <MaterialXFormat/File.h>
 #include <MaterialXFormat/XmlIo.h>
 
+#include <MaterialXCore/Units.h>
+#include <MaterialXGenShader/TypeDesc.h>
 #include <MaterialXTest/Catch/catch.hpp>
 
 #include <iostream>
@@ -15,6 +17,8 @@ namespace mx = MaterialX;
 
 TEST_CASE("Units", "[units]")
 {
+    mx::Units::EUnit sceneUnit = mx::Units::E_UNIT_FOOT;
+
     bool _needsValidation = false;
     mx::FilePath libraryPath("libraries/stdlib");
     mx::FilePath examplesPath("resources/Materials/Examples/Units");
@@ -65,81 +69,54 @@ TEST_CASE("Units", "[units]")
 
                 if (pNode->getInputCount()) {
                     for (mx::InputPtr input : pNode->getInputs()) {
-                        std::cout << "input_name: " << input->getName() << std::endl
-                            << "input_type: " << input->getType() << std::endl
-                            << "input_value: " << input->getValueString() << std::endl;
+                        const mx::TypeDesc* type = mx::TypeDesc::get(input->getType());
+                        const mx::ValuePtr value = input->getValue();
+                        std::string value_string = value ? value->getValueString() : "No value ";
 
-                        if (input->hasUnit())
+                        std::cout << "input_name: " << input->getName() << std::endl
+                                  << "input_type: " << type->getName() << std::endl
+                                  << "input_value:" << value_string << std::endl;
+
+                        if (input->hasUnit()) {
                             std::cout << "input_unit_type: " << input->getUnit() << std::endl;
+
+                            if (type->isScalar() && value)
+                            {
+                                float val = value->asA<float>();
+                                float cval = mx::Units::convertUnit(val, mx::Units::E_UNIT_M, sceneUnit);
+                                std::cout << "converted_value:" << cval << std::endl;
+                            }
+                        }
                     }
                 }
             
                 if (pNode->getParameterCount()) {
                     for (mx::ParameterPtr param: pNode->getParameters()) {
+                        const mx::TypeDesc* type = mx::TypeDesc::get(param->getType());
+                        const mx::ValuePtr value = param->getValue();
+                        std::string value_string = value ? value->getValueString() : "No value ";
+
                         std::cout << "param_name: " << param->getName() << std::endl
-                            << "param_type: " << param->getType() << std::endl
+                            << "param_type: " << type->getName() << std::endl
                             << "param_value: " << param->getValueString() << std::endl;
 
-                        if (param->hasUnit())
+                        if (param->hasUnit()) {
                             std::cout << "param_unit_type: " << param->getUnit() << std::endl;
+
+                            mx::Units::EUnit valUnit = mx::Units::toUnit(param->getUnit());
+
+                            if (type->isScalar() && value)
+                            {
+                                float val = value->asA<float>();
+                                float cval = mx::Units::convertUnit(val, mx::Units::E_UNIT_M, sceneUnit);
+                                std::cout << "From: " << mx::Units::unitName(valUnit) << std::endl
+                                    << "To: " << mx::Units::unitName(sceneUnit) << std::endl
+                                    << "converted_value: " << cval << std::endl;
+                            }
+                        }
                     }
                 }
             }
-/*
-            if (elem->isA<mx::Node>("image"))
-            {
-                
-                mx::ParameterPtr param = elem->asA<mx::Node>()->getParameter("file");
-                if (param){
-                    std::string imgfile = param->getValueString();
-                    std::cout << "Image node " << elem->getName() <<
-                        " references " << imgfile << std::endl;
-                    valueElementCount++;
-                }
-            }
-*/
-#if 0
-            if (elem->isA<mx::Input>())
-            {
-                if (elem->hasAttribute("unit"))
-                {
-                    
-                    mx::Vector2 paramvalue = elem->getTypedAttribute<mx::Vector2>("value");
-                    
-                    std::cout << elem->getCategory() << " has Units: " << elem->getAttribute("unit") << " Value: " << paramvalue[0] << std::endl;
-                }
-                else
-                    std::cout << elem->getCategory() << " is Unitless" << std::endl;
-
-                //std::cout << "Input: " << elem->getName() << std::endl;
-                //for (const std::string& attrName : elem->getAttributeNames()) {
-                //    std::cout << "\t Attributes: " << attrName << std::endl;
-                //}
-                //std::cout << "\t Attributes: " << elem->getAttribute() << std::endl;
-                valueElementCount++;
-            }
-
-            if (elem->isA<mx::Parameter>())
-            {
-                //std::cout << "Input: " << elem->getName() << std::endl;
-                //for (const std::string& attrName : elem->getAttributeNames()) {
-                //    std::cout << "\t Attributes: " << attrName << std::endl;
-                std::cout << elem->getAttribute("type") << std::endl;
-
-                
-
-                if (elem->hasAttribute("unit")) {
-                    mx::Vector2 paramvalue = elem->getTypedAttribute<mx::Vector2>("value");
-                    std::cout << elem->getCategory() << " has Units: " << elem->getAttribute("unit") << " Value: " << paramvalue[0] << std::endl;
-                }
-                else
-                    std::cout << elem->getCategory() << " is Unitless" << std::endl;
-
-                //}
-                //std::cout << "\t Attributes: " << elem->getAttribute() << std::endl;
-                valueElementCount++;
-            }
-#endif 
         }
         REQUIRE(valueElementCount > 0);
 
