@@ -15,7 +15,7 @@
 
 namespace mx = MaterialX;
 
-TEST_CASE("Units", "[units]")
+TEST_CASE("Units Test", "[unitstesting]")
 {
     mx::Units::EUnit sceneUnit = mx::Units::E_UNIT_FOOT;
 
