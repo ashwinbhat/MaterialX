@@ -12,6 +12,7 @@
 #include <MaterialXGenShader/Library.h>
 
 #include <MaterialXGenShader/ColorManagementSystem.h>
+#include <MaterialXGenShader/UnitSystem.h>
 #include <MaterialXGenShader/Factory.h>
 #include <MaterialXGenShader/ShaderStage.h>
 #include <MaterialXGenShader/Syntax.h>
@@ -150,6 +151,18 @@ class ShaderGenerator
         return _colorManagementSystem;
     }
 
+    /// Sets the unit system
+    void setUnitSystem(UnitSystemPtr unitSystem)
+    {
+        _unitSystem = unitSystem;
+    }
+
+    /// Returns the color management system
+    UnitSystemPtr getUnitSystem() const
+    {
+        return _unitSystem;
+    }
+
     /// Return a registered shader node implementation given an implementation element.
     /// The element must be an Implementation or a NodeGraph acting as implementation.
     /// If no registered implementation is found a 'default' implementation instance
@@ -198,6 +211,7 @@ class ShaderGenerator
     SyntaxPtr _syntax;
     Factory<ShaderNodeImpl> _implFactory;
     ColorManagementSystemPtr _colorManagementSystem;
+    UnitSystemPtr _unitSystem;
     StringMap _tokenSubstitutions;
 };
 
