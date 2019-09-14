@@ -516,33 +516,17 @@ TEST_CASE("Render: GLSL TestSuite", "[renderglsl]")
     renderTester.validate(testRootPaths, optionsFilePath);
 }
 
-<<<<<<< HEAD
 TEST_CASE("Render: GLSL Colorspace", "[glslcolorspace]")
-=======
-TEST_CASE("Render: GLSL Colospace Test", "[renderglsl2]")
->>>>>>> Unit System (WIP)
 {
     GlslShaderRenderTester renderTester(mx::GlslShaderGenerator::create());
 
     const mx::FilePath testRootPath = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/TestSuite");
-<<<<<<< HEAD
     const mx::FilePath testRootPath2 = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/Examples/Colorspace");
-    mx::FilePathVec testRootPaths;
-    testRootPaths.push_back(testRootPath);
-    testRootPaths.push_back(testRootPath2);
-=======
-    const mx::FilePath testRootPath2 = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/Examples/colorspace");
 
     mx::FilePathVec testRootPaths;
     testRootPaths.push_back(testRootPath2);
-    
->>>>>>> Unit System (WIP)
 
     mx::FilePath optionsFilePath = testRootPath / mx::FilePath("_options.mtlx");
 
     renderTester.validate(testRootPaths, optionsFilePath);
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> Unit System (WIP)
