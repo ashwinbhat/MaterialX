@@ -535,7 +535,7 @@ ShaderGraphPtr ShaderGraph::create(const ShaderGraph* parent, const string& name
                         element->getDocument()->getActiveUnit() : context.getOptions().targetUnitOverride;
 
                     graph->populateInputUnitTransformMap(unitSystem, graph->_nodeMap[newNodeName], bindParam, targetUnit);
-                    std::cout << "Target Unit :" << targetUnit << std::endl;
+                    std::cout << "PARAMETER Target Unit :" << targetUnit << std::endl;
                 }
                 inputSocket->setPath(bindParam->getNamePath());
                 input->setPath(inputSocket->getPath());
@@ -577,7 +577,7 @@ ShaderGraphPtr ShaderGraph::create(const ShaderGraph* parent, const string& name
                         element->getDocument()->getActiveUnit() : context.getOptions().targetUnitOverride;
 
                     graph->populateInputUnitTransformMap(unitSystem, graph->_nodeMap[newNodeName], bindInput, targetUnit);
-                    std::cout << "Target Unit :" << targetUnit << std::endl;
+                    std::cout << "BINDINPUT Target Unit :" << targetUnit << std::endl;
                 }
                 inputSocket->setPath(bindInput->getNamePath());
                 input->setPath(inputSocket->getPath());
