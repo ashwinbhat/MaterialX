@@ -523,7 +523,7 @@ TEST_CASE("Render: GLSL Colorspace", "[glslcolorspace]")
     //Note: On MacOS XCODE set working folder in the scheme (options)
     //      $PROJECT_DIR/source/MaterialXTest
     const mx::FilePath testRootPath = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/TestSuite");
-    const mx::FilePath testRootPath2 = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/Examples/Colorspace");
+    const mx::FilePath testRootPath2 = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/Examples/Units");
 
     mx::FilePathVec testRootPaths;
     testRootPaths.push_back(testRootPath2);

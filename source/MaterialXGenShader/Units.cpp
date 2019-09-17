@@ -16,7 +16,7 @@
 * @brief Units implementation.
 */
 
-#include <MaterialXCore/Units.h>
+#include <MaterialXGenShader/Units.h>
 
 #include <MaterialXCore/Util.h>
 #include <MaterialXCore/Value.h>
@@ -87,140 +87,7 @@ namespace MaterialX
 
     }  // anonymous namespace
 
-    float Units::unitToCentimeterScale(const std::string& unit) {
-        // Metric SI units.
-        if (unit == "yottameter") {
-            return 1.0e26f;
-        }
-        if (unit == "zettameter") {
-            return 1.0e23f;
-        }
-        if (unit == "exameter") {
-            return 1.0e20f;
-        }
-        if (unit == "petameter") {
-            return 1.0e17f;
-        }
-        if (unit == "terameter") {
-            return 1.0e14f;
-        }
-        if (unit == "gigameter") {
-            return 1.0e11f;
-        }
-        if (unit == "megameter") {
-            return 1.0e8f;
-        }
-        if (unit == "kilometer" || unit == "km") {
-            return 1.0e5f;
-        }
-        if (unit == "hectometer") {
-            return 1.0e4f;
-        }
-        if (unit == "decameter") {
-            return 1.0e3f;
-        }
-        if (unit == "meter" || unit == "m") {
-            return 1.0e2f;
-        }
-        if (unit == "decimeter") {
-            return 1.0e1f;
-        }
-        if (unit == "centimeter" || unit == "cm") {
-            return 1.0f;
-        }
-        if (unit == "millimeter" || unit == "mm") {
-            return 1.0e-1f;
-        }
-        if (unit == "micrometer") {
-            return 1.0e-4f;
-        }
-        if (unit == "nanometer") {
-            return 1.0e-7f;
-        }
-        if (unit == "picometer") {
-            return 1.0e-10f;
-        }
-        if (unit == "femtometer") {
-            return 1.0e-13f;
-        }
-        if (unit == "attometer") {
-            return 1.0e-16f;
-        }
-        if (unit == "zeptometer") {
-            return 1.0e-19f;
-        }
-        if (unit == "yoctometer") {
-            return 1.0e-22f;
-        }
-
-        // Metric, non-SI.
-        if (unit == "mil" || unit == "mil_swedennorway") {
-            return 1.0e6f;
-        }
-        if (unit == "angstrom") {
-            return 1.0e-8f;
-        }
-        if (unit == "micron") {
-            return 1.0e-4f;
-        }
-
-        // Imperial units.
-        if (unit == "microinch") {
-            return 2.54e-6f;
-        }
-        if (unit == "inch" || unit == "in") {
-            return 2.54f;
-        }
-        if (unit == "foot" || unit == "ft") {
-            return 30.48f;
-        }
-        if (unit == "yard") {
-            return 91.44f;
-        }
-        if (unit == "mile") {
-            return 160934.4f;
-        }
-
-        // Astronomical units.
-        if (unit == "lightyear") {
-            return 9.4605284e17f;
-        }
-        if (unit == "parsec") {
-            return 3.08567758e18f;
-        }
-        if (unit == "astronomicalunit") {
-            return 1.49597871e13f;
-        }
-
-        // WFT units!
-        if (unit == "hand") {
-            return 10.16f;
-        }
-        if (unit == "span" || unit == "span_cloth") {
-            return 22.86f;
-        }
-        if (unit == "fathom") {
-            return 182.88f;
-        }
-        if (unit == "rope") {
-            return 609.6f;
-        }
-        if (unit == "chain") {
-            return 2011.68f;
-        }
-        if (unit == "furlong") {
-            return 20116.8f;
-        }
-
-        // No dimension.
-        if (unit == "dimensionless") {
-            return 1.0f;
-        }
-
-        // Unsupported unit.
-        throw ExceptionTypeError("Unsupported unit:: " + unit);
-    }
-
+    
     const std::string& Units::unitName(EUnit unit) {
         return kUnitNames[unit];
     }

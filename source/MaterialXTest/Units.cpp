@@ -7,8 +7,8 @@
 #include <MaterialXFormat/File.h>
 #include <MaterialXFormat/XmlIo.h>
 
-#include <MaterialXCore/Units.h>
 #include <MaterialXGenShader/TypeDesc.h>
+#include <MaterialXGenShader/Units.h>
 #include <MaterialXTest/Catch/catch.hpp>
 
 #include <iostream>
