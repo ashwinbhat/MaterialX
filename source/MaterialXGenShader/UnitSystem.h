@@ -14,6 +14,7 @@
 #include <MaterialXGenShader/ShaderNode.h>
 #include <MaterialXGenShader/ShaderNodeImpl.h>
 #include <MaterialXGenShader/TypeDesc.h>
+#include <MaterialXGenShader/Units.h>
 
 #include <MaterialXCore/Document.h>
 
@@ -31,16 +32,26 @@ struct UnitTransform
 {
     UnitTransform(const string& ss, const string& ts, const TypeDesc* t);
 
-    string sourceSpace;
-    string targetSpace;
+    string sourceUnit;
+    string targetUnit;
     const TypeDesc* type;
 
     /// Comparison operator
     bool operator==(const UnitTransform &other) const
     {
-        return sourceSpace == other.sourceSpace &&
-            targetSpace == other.targetSpace &&
+        return sourceUnit == other.sourceUnit &&
+            targetUnit == other.targetUnit &&
             type == other.type;
+    }
+
+    float encodeSourceUnit() const
+    {
+        return ((float)Units::toUnit(sourceUnit));
+    }
+
+    float encodeTargetUnit() const
+    {
+        return ((float)Units::toUnit(targetUnit));
     }
 };
 
