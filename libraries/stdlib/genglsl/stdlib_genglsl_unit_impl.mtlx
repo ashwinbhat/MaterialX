@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<materialx version="1.36">
+
+  <!-- ======================================================================== -->
+  <!-- Unit System Implementations -->
+  <!-- ======================================================================== -->
+
+  <implementation name="IM_distance_unit_float_genglsl" file="stdlib/genglsl/mx_distance_unit_float.glsl" function="mx_distance_unit_float" language="genglsl" />
+  
+</materialx>
