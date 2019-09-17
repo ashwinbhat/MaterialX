@@ -16,8 +16,8 @@ namespace MaterialX
 //
 
 UnitTransform::UnitTransform(const string& ss, const string& ts, const TypeDesc* t) :
-    sourceSpace(ss),
-    targetSpace(ts),
+    sourceUnit(ss),
+    targetUnit(ts),
     type(t)
 {
     if (type != Type::FLOAT)
@@ -50,7 +50,7 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
     ImplementationPtr impl = _document->getImplementation(implName);
     if (!impl)
     {
-        throw ExceptionShaderGenError("No implementation found for transform: ('" + transform.sourceSpace + "', '" + transform.targetSpace + "').");
+        throw ExceptionShaderGenError("No implementation found for transform: ('" + transform.sourceUnit + "', '" + transform.targetUnit + "').");
     }
 
     // Check if it's created and cached already,
@@ -79,7 +79,10 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
 
     // Add the conversion code
     ShaderInput* convertinput = shaderNode->addInput("unit", Type::VECTOR2);
-    convertinput->setValue(Value::createValue(Vector2(1.0f, 2.0f)));
+
+    float from = transform.encodeSourceUnit();
+    float to = transform.encodeTargetUnit();
+    convertinput->setValue(Value::createValue(Vector2(from, to)));
     
     shaderNode->addOutput("out", transform.type);
 

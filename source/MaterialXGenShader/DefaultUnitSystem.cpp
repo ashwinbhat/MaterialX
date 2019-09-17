@@ -18,7 +18,7 @@ const string DefaultUnitSystem::US_NAME = "default_us";
 
 string DefaultUnitSystem::getImplementationName(const UnitTransform& /*transform*/) const
 {
-    //return "IM_" + transform.sourceSpace + "_to_" + transform.targetSpace + "_" + transform.type->getName() + "_" + _language;
+    //return "IM_" + transform.sourceUnit + "_to_" + transform.targetUnit + "_" + transform.type->getName() + "_" + _language;
     return "IM_distance_unit_float_genglsl";
 }
 
