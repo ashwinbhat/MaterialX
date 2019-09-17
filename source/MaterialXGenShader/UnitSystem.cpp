@@ -20,9 +20,9 @@ UnitTransform::UnitTransform(const string& ss, const string& ts, const TypeDesc*
     targetSpace(ts),
     type(t)
 {
-    if (type != Type::COLOR3 && type != Type::COLOR4)
+    if (type != Type::FLOAT)
     {
-        throw ExceptionShaderGenError("Unit space transform can only be a color3 or color4.");
+        throw ExceptionShaderGenError("Unit space transform can only be a float");
     }
 }
 
@@ -68,18 +68,19 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
 
     // Create ports on the node.
     ShaderInput* input = shaderNode->addInput("in", transform.type);
-    if (transform.type == Type::COLOR3)
+    if (transform.type == Type::FLOAT)
     {
-        input->setValue(Value::createValue(Color3(0.0f, 0.0f, 0.0f)));
-    }
-    else if (transform.type == Type::COLOR4)
-    {
-        input->setValue(Value::createValue(Color4(0.0f, 0.0f, 0.0f, 1.0)));
+        input->setValue(Value::createValue(999.0f));
     }
     else
     {
         throw ExceptionShaderGenError("Invalid type specified to createColorTransform: '" + transform.type->getName() + "'");
     }
+
+    // Add the conversion code
+    ShaderInput* convertinput = shaderNode->addInput("unit", Type::VECTOR2);
+    convertinput->setValue(Value::createValue(Vector2(1.0f, 2.0f)));
+    
     shaderNode->addOutput("out", transform.type);
 
     return shaderNode;

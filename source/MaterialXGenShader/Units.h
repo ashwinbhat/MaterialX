@@ -44,10 +44,6 @@ namespace MaterialX
             E_UNIT_CD_PER_M2       ///< cd/m^2
         };
 
-        /// @brief Convert a unit string to a centimeter scale.
-        /// @param unit The unit string.
-        /// @returns the scaling factor for converting the given unit to centimeters.
-        static float unitToCentimeterScale(const std::string& unit);
 
         /// @brief Convert a unit to unit name string.
         /// @param unit The unit.

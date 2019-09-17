@@ -248,6 +248,43 @@ class Element : public std::enable_shared_from_this<Element>
     }
 
     /// @}
+    /// @name Unit settings
+    /// @{
+
+    /// Set the units string.
+    void setUnit(const string& unit)
+    {
+        setAttribute(UNIT_ATTRIBUTE, unit);
+    }
+
+    /// Return true if a unit string has been set.
+    bool hasUnit() const
+    {
+        return hasAttribute(UNIT_ATTRIBUTE);
+    }
+
+    /// Return the units to be used.
+    const string& getUnit() const
+    {
+        return getAttribute(UNIT_ATTRIBUTE);
+    }
+
+    /// Return the color space string that is active at the scope of this
+    /// element, taking all ancestor elements into account.
+    const string& getActiveUnit() const
+    {
+        for (ConstElementPtr elem = getSelf(); elem; elem = elem->getParent())
+        {
+            if (elem->hasUnit())
+            {
+                return elem->getUnit();
+            }
+        }
+        return EMPTY_STRING;
+    }
+
+
+    /// @}
     /// @name Target
     /// @{
 
@@ -834,6 +871,7 @@ class Element : public std::enable_shared_from_this<Element>
     static const string FILE_PREFIX_ATTRIBUTE;
     static const string GEOM_PREFIX_ATTRIBUTE;
     static const string COLOR_SPACE_ATTRIBUTE;
+    static const string UNIT_ATTRIBUTE;
     static const string TARGET_ATTRIBUTE;
     static const string VERSION_ATTRIBUTE;
     static const string DEFAULT_VERSION_ATTRIBUTE;
@@ -922,26 +960,6 @@ class TypedElement : public Element
     }
 
     /// @}
-    /// @name Unit String
-
-    /// Set the element's unit type string.
-    void setUnit(const string& unit)
-    {
-        setAttribute(UNIT_ATTRIBUTE, unit);
-    }
-
-    /// Return true if the given element has a unit attribute.
-    bool hasUnit() const
-    {
-        return hasAttribute(UNIT_ATTRIBUTE);
-    }
-
-    /// Return the element's unit string.
-    const string& getUnit() const
-    {
-        return getAttribute(UNIT_ATTRIBUTE);
-    }
-    /// @}
     /// @name TypeDef References
     /// @{
 
@@ -953,7 +971,6 @@ class TypedElement : public Element
 
 public:
     static const string TYPE_ATTRIBUTE;
-    static const string UNIT_ATTRIBUTE;
 };
 
 /// @class ValueElement
