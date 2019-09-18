@@ -44,6 +44,14 @@ struct UnitTransform
             type == other.type;
     }
 
+    string measurementType() const
+    {
+        Units::DistanceUnit sourceType = Units::toUnit(sourceUnit);
+        if ((Units::UNITTYPE_MM <= sourceType && sourceType <= Units::UNITTYPE_M))
+            return "distance_unit";
+        else
+            return "unknown_unit";
+    }
     float encodeSourceUnit() const
     {
         return ((float)Units::toUnit(sourceUnit));

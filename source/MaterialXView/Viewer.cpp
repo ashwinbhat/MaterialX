@@ -1,6 +1,7 @@
 #include <MaterialXView/Viewer.h>
 
 #include <MaterialXGenShader/DefaultColorManagementSystem.h>
+#include <MaterialXGenShader/DefaultUnitSystem.h>
 #include <MaterialXGenShader/Shader.h>
 #include <MaterialXRender/OiioImageLoader.h>
 #include <MaterialXRender/StbImageLoader.h>
@@ -255,9 +256,13 @@ Viewer::Viewer(const mx::FilePathVec& libraryFolders,
         }
     });
 
+    // Set default unit
+    _unitspace = "foot";
+
     // Set default generator options.
     _genContext.getOptions().hwSpecularEnvironmentMethod = _specularEnvironmentMethod;
     _genContext.getOptions().targetColorSpaceOverride = "lin_rec709";
+    _genContext.getOptions().targetUnitOverride = _unitspace;
     _genContext.getOptions().fileTextureVerticalFlip = true;
 
     // Set default light information before initialization
@@ -652,6 +657,35 @@ void Viewer::createAdvancedSettings(Widget* parent)
         _showAdvancedProperties = enable;
         updateDisplayedProperties();
     });
+
+    //Units
+    {
+        Widget* sampleGroup = new Widget(advancedPopup);
+        sampleGroup->setLayout(new ng::BoxLayout(ng::Orientation::Horizontal));
+        new ng::Label(sampleGroup, "Unit Space:");
+
+       
+        {
+            mProcessEvents = false;
+            unitOptions.push_back("millimeter");
+            unitOptions.push_back("centimeter");
+            unitOptions.push_back("meter");
+            unitOptions.push_back("kilometer");
+            unitOptions.push_back("inch");
+            unitOptions.push_back("foot");
+            unitOptions.push_back("mile");
+            mProcessEvents = true;
+        }
+        ng::ComboBox* sampleBox = new ng::ComboBox(sampleGroup, unitOptions);
+        sampleBox->setChevronIcon(-1);
+        sampleBox->setSelectedIndex(0);
+        sampleBox->setCallback([this](int index)
+        {
+            _unitspace = unitOptions[index];
+            _genContext.getOptions().targetUnitOverride= _unitspace;
+            reloadShaders();
+        });
+    }
 }
 
 void Viewer::updateGeometrySelections()
@@ -1078,6 +1112,10 @@ void Viewer::loadStandardLibraries()
         _genContext.registerSourceCodeSearchPath(filePath);
     }
     _genContext.getShaderGenerator().setColorManagementSystem(cms);
+
+    mx::UnitSystemPtr unitSystem = mx::DefaultUnitSystem::create(_genContext.getShaderGenerator().getLanguage());
+    unitSystem->loadLibrary(_stdLib);
+    _genContext.getShaderGenerator().setUnitSystem(unitSystem);
 }
 
 bool Viewer::keyboardEvent(int key, int scancode, int action, int modifiers)

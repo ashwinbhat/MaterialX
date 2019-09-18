@@ -10,16 +10,15 @@
 namespace MaterialX
 {
 
-const string DefaultUnitSystem::US_NAME = "default_us";
+const string DefaultUnitSystem::UNITSYTEM_NAME = "default_us";
 
 //
 // DefaultUnitSystem methods
 //
 
-string DefaultUnitSystem::getImplementationName(const UnitTransform& /*transform*/) const
+string DefaultUnitSystem::getImplementationName(const UnitTransform& transform) const
 {
-    //return "IM_" + transform.sourceUnit + "_to_" + transform.targetUnit + "_" + transform.type->getName() + "_" + _language;
-    return "IM_distance_unit_float_genglsl";
+    return "IM_" + transform.measurementType() + "_" + transform.type->getName() + "_" + _language;
 }
 
 DefaultUnitSystemPtr DefaultUnitSystem::create(const string& language)

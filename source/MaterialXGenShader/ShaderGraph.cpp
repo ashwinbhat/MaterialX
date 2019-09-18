@@ -1246,14 +1246,16 @@ void ShaderGraph::populateInputUnitTransformMap(UnitSystemPtr unitSystem, Shader
     const string& sourceUnitSpace = input->getUnit();
     if (shaderInput && !sourceUnitSpace.empty())
     {
-        if (shaderInput->getType() == Type::FLOAT)
+        if (shaderInput->getType() != Type::COLOR2 &&
+            shaderInput->getType() != Type::COLOR3 && 
+            shaderInput->getType() != Type::COLOR4)
         {
-            // If we're converting between two identical color spaces than we have no work to do.
             if (sourceUnitSpace != targetUnitSpace)
             {
                 UnitTransform transform(sourceUnitSpace, targetUnitSpace, shaderInput->getType());
                 if (unitSystem->supportsTransform(transform))
                 {
+                    std::cerr << "Unit conversion supported for " << sourceUnitSpace << " to " << targetUnitSpace << std::endl;
                     _inputUnitTransformMap.emplace(shaderInput, transform);
                 }
             }

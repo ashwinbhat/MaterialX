@@ -203,6 +203,10 @@ class Viewer : public ng::Screen
     bool _captureFrame;
     mx::FilePath _captureFrameFileName;
 
+    // Working space
+    std::string _unitspace;
+    mx::StringVec unitOptions;
+
     // UV wireframe drawing
     bool _drawUVGeometry;
     MaterialPtr _wireMaterialUV;

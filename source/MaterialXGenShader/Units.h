@@ -30,55 +30,52 @@ namespace MaterialX
     class Units {
     public:
         /// @brief The units of a property.
-        enum EUnit {
-            E_UNIT_DIMENSIONLESS,  ///< No unit (dimensionless)
-            E_UNIT_MM,             ///< millimeter
-            E_UNIT_CM,             ///< centimeter
-            E_UNIT_M,              ///< meter
-            E_UNIT_KM,             ///< kilometer
-            E_UNIT_INCH,           ///< inch
-            E_UNIT_FOOT,           ///< foot
-            E_UNIT_MILE,           ///< mile
-            E_UNIT_DEGREE,         ///< degree
-            E_UNIT_RADIAN,         ///< radian
-            E_UNIT_CD_PER_M2       ///< cd/m^2
+        enum DistanceUnit {
+            UNITTYPE_UNKNOWN,  ///< No unit (dimensionless)
+            UNITTYPE_MM,             ///< millimeter
+            UNITTYPE_CM,             ///< centimeter
+            UNITTYPE_M,              ///< meter
+            UNITTYPE_KM,             ///< kilometer
+            UNITTYPE_INCH,           ///< inch
+            UNITTYPE_FOOT,           ///< foot
+            UNITTYPE_MILE,           ///< mile
         };
 
 
         /// @brief Convert a unit to unit name string.
         /// @param unit The unit.
         /// @returns the unit name string.
-        static const std::string& unitName(EUnit unit);
+        static const std::string& unitName(DistanceUnit unit);
 
         /// @brief Convert a string to a EUnit enum.
         /// @param unit The string to convert.
         /// @returns the unit, or E_UNIT_DIMENSIONLESS if the string did not represent a known unit.
-        static Units::EUnit toUnit(const char* unit) { return toUnit(std::string(unit)); }
+        static Units::DistanceUnit toUnit(const char* unit) { return toUnit(std::string(unit)); }
 
         /// @brief Convert a string to a EUnit enum.
         /// @param unit The string to convert.
         /// @returns the unit, or E_UNIT_DIMENSIONLESS if the string did not represent a known unit.
-        static Units::EUnit toUnit(const std::string& unit);
+        static Units::DistanceUnit toUnit(const std::string& unit);
 
         /// @brief Convert a value from one unit to another unit.
         /// @param v The value to convert.
         /// @param from The unit to convert from.
         /// @param to The unit to convert to.
         /// @returns the converted value.
-        static double convertUnit(double v, Units::EUnit from, Units::EUnit to);
+        static double convertUnit(double v, Units::DistanceUnit from, Units::DistanceUnit to);
 
         /// @brief Convert a value from one unit to another unit.
         /// @param v The value to convert.
         /// @param from The unit to convert from.
         /// @param to The unit to convert to.
         /// @returns the converted value.
-        static Vector3 convertUnit(Vector3 v, Units::EUnit from, Units::EUnit to);
+        static Vector3 convertUnit(Vector3 v, Units::DistanceUnit from, Units::DistanceUnit to);
 
         /// @brief Convert an array of values from one unit to another unit.
         /// @param[in,out] v The value array to convert.
         /// @param from The unit to convert from.
         /// @param to The unit to convert to.
-        static void convertUnit(std::vector<float>* v, Units::EUnit from, Units::EUnit to);
+        static void convertUnit(std::vector<float>* v, Units::DistanceUnit from, Units::DistanceUnit to);
     };
 
 }  // namespace MaterialX

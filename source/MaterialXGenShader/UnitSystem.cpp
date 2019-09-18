@@ -20,9 +20,9 @@ UnitTransform::UnitTransform(const string& ss, const string& ts, const TypeDesc*
     targetUnit(ts),
     type(t)
 {
-    if (type != Type::FLOAT)
+    if (type != Type::FLOAT && type != Type::VECTOR2 && type != Type::VECTOR3 && type != Type::VECTOR4)
     {
-        throw ExceptionShaderGenError("Unit space transform can only be a float");
+        throw ExceptionShaderGenError("Unit space transform can only be a float or vectors");
     }
 }
 
@@ -70,7 +70,19 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
     ShaderInput* input = shaderNode->addInput("in", transform.type);
     if (transform.type == Type::FLOAT)
     {
-        input->setValue(Value::createValue(999.0f));
+        input->setValue(Value::createValue(1.0));
+    }
+    else if (transform.type == Type::VECTOR2)
+    {
+        input->setValue(Value::createValue(Vector2(1.0f, 1.0)));
+    }
+    else if (transform.type == Type::VECTOR3)
+    {
+        input->setValue(Value::createValue(Vector3(1.0f, 1.0, 1.0)));
+    }
+    else if (transform.type == Type::VECTOR4)
+    {
+        input->setValue(Value::createValue(Vector4(1.0f, 1.0, 1.0, 1.0)));
     }
     else
     {

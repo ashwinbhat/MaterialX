@@ -17,7 +17,7 @@ namespace mx = MaterialX;
 
 TEST_CASE("Units Test", "[unitstesting]")
 {
-    mx::Units::EUnit sceneUnit = mx::Units::E_UNIT_FOOT;
+    mx::Units::DistanceUnit sceneUnit = mx::Units::UNITTYPE_FOOT;
 
     bool _needsValidation = false;
     mx::FilePath libraryPath("libraries/stdlib");
@@ -83,7 +83,7 @@ TEST_CASE("Units Test", "[unitstesting]")
                             if (type->isScalar() && value)
                             {
                                 float val = value->asA<float>();
-                                float cval = mx::Units::convertUnit(val, mx::Units::E_UNIT_M, sceneUnit);
+                                float cval = (float) mx::Units::convertUnit(val, mx::Units::UNITTYPE_M, sceneUnit);
                                 std::cout << "converted_value:" << cval << std::endl;
                             }
                         }
@@ -103,12 +103,12 @@ TEST_CASE("Units Test", "[unitstesting]")
                         if (param->hasUnit()) {
                             std::cout << "param_unit_type: " << param->getUnit() << std::endl;
 
-                            mx::Units::EUnit valUnit = mx::Units::toUnit(param->getUnit());
+                            mx::Units::DistanceUnit valUnit = mx::Units::toUnit(param->getUnit());
 
                             if (type->isScalar() && value)
                             {
                                 float val = value->asA<float>();
-                                float cval = mx::Units::convertUnit(val, mx::Units::E_UNIT_M, sceneUnit);
+                                float cval = (float)mx::Units::convertUnit(val, mx::Units::UNITTYPE_M, sceneUnit);
                                 std::cout << "From: " << mx::Units::unitName(valUnit) << std::endl
                                     << "To: " << mx::Units::unitName(sceneUnit) << std::endl
                                     << "converted_value: " << cval << std::endl;

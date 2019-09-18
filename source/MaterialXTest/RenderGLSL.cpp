@@ -516,12 +516,10 @@ TEST_CASE("Render: GLSL TestSuite", "[renderglsl]")
     renderTester.validate(testRootPaths, optionsFilePath);
 }
 
-TEST_CASE("Render: GLSL Colorspace", "[glslcolorspace]")
+TEST_CASE("Render: GLSL Units", "[glslunit]")
 {
     GlslShaderRenderTester renderTester(mx::GlslShaderGenerator::create());
 
-    //Note: On MacOS XCODE set working folder in the scheme (options)
-    //      $PROJECT_DIR/source/MaterialXTest
     const mx::FilePath testRootPath = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/TestSuite");
     const mx::FilePath testRootPath2 = mx::FilePath::getCurrentPath() / mx::FilePath("resources/Materials/Examples/Units");
 
