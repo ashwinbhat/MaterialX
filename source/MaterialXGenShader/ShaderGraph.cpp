@@ -1255,7 +1255,7 @@ void ShaderGraph::populateInputUnitTransformMap(UnitSystemPtr unitSystem, Shader
                 UnitTransform transform(sourceUnitSpace, targetUnitSpace, shaderInput->getType());
                 if (unitSystem->supportsTransform(transform))
                 {
-                    std::cerr << "Unit conversion supported for " << sourceUnitSpace << " to " << targetUnitSpace << std::endl;
+                    std::cout << "Unit conversion supported for " << sourceUnitSpace << " to " << targetUnitSpace << std::endl;
                     _inputUnitTransformMap.emplace(shaderInput, transform);
                 }
             }

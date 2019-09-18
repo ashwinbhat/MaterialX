@@ -22,14 +22,14 @@ void mx_distance_unit_float(float _in , vec2 _unit, out float result) {
     result = _in * unit_ratio(_unit);
 }
 
-void mx_distance_unit_vec2(vec2 _in , vec2 _unit, out vec2 result) {
+void mx_distance_unit_vector2(vec2 _in , vec2 _unit, out vec2 result) {
     result = _in * unit_ratio(_unit);
 }
 
-void mx_distance_unit_vec3(vec3 _in , vec2 _unit, out vec3 result) {
+void mx_distance_unit_vector3(vec3 _in , vec2 _unit, out vec3 result) {
     result = _in * unit_ratio(_unit);
 }
 
-void mx_distance_unit_vec4(vec4 _in , vec2 _unit, out vec4 result) {
+void mx_distance_unit_vector4(vec4 _in , vec2 _unit, out vec4 result) {
     result = _in * unit_ratio(_unit);
 }
