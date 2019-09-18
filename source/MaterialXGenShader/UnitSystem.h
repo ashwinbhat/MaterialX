@@ -47,7 +47,7 @@ struct UnitTransform
     string measurementType() const
     {
         Units::DistanceUnit sourceType = Units::toUnit(sourceUnit);
-        if ((Units::UNITTYPE_MM <= sourceType && sourceType <= Units::UNITTYPE_M))
+        if ((Units::UNITTYPE_MM <= sourceType && sourceType <= Units::UNITTYPE_MILE))
             return "distance_unit";
         else
             return "unknown_unit";
