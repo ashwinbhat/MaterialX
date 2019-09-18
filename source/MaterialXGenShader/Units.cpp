@@ -28,57 +28,49 @@ namespace MaterialX
     {
 
         // Matching Units::EUnit.
-        const std::string kUnitNames[] = {
-            std::string(""),    std::string("mm"),    std::string("cm"),
-            std::string("m"),   std::string("km"),    std::string("\""),
-            std::string("ft"),  std::string("mi"),    std::string("deg"),
-            std::string("rad"), std::string("cd/m^2") };
+        const std::string kDistanceUnitNames[] = {
+            std::string(""),   
+            std::string("millimeter"),    
+            std::string("centimeter"),
+            std::string("meter"),
+            std::string("kilometer"), 
+            std::string("inch"),
+            std::string("foot"),
+            std::string("mile")     
+        };
 
-        double unitScale(Units::EUnit unit) {
+        double unitScale(Units::DistanceUnit unit) {
             switch (unit) {
                 // Length units are converted to millimeters.
-            case Units::E_UNIT_MM: {
+            case Units::UNITTYPE_MM: {
                 return 1.0;
             }
-            case Units::E_UNIT_CM: {
+            case Units::UNITTYPE_CM: {
                 return 10.0;
             }
-            case Units::E_UNIT_M: {
+            case Units::UNITTYPE_M: {
                 return 1000.0;
             }
-            case Units::E_UNIT_KM: {
+            case Units::UNITTYPE_KM: {
                 return 1000000.0;
             }
-            case Units::E_UNIT_INCH: {
+            case Units::UNITTYPE_INCH: {
                 return 25.4;
             }
-            case Units::E_UNIT_FOOT: {
+            case Units::UNITTYPE_FOOT: {
                 return 304.8;
             }
-            case Units::E_UNIT_MILE: {
+            case Units::UNITTYPE_MILE: {
                 return 1609344.0;
             }
 
-                                     // Angle units are converted to radians.
-            case Units::E_UNIT_RADIAN: {
-                return 1.0;
-            }
-            case Units::E_UNIT_DEGREE: {
-                return 0.01745329251994329576923690768488612713443;
-            }
-
-                                       // Luminance units are converted to candela per m^2.
-            case Units::E_UNIT_CD_PER_M2: {
-                return 1.0;
-            }
-
-                                          // Unitless.
+            // Unitless.
             default: { return 1.0; }
             }
         }
 
-        double unitRatio(Units::EUnit from, Units::EUnit to) {
-            if (from == Units::E_UNIT_DIMENSIONLESS || to == Units::E_UNIT_DIMENSIONLESS || from == to) {
+        double unitRatio(Units::DistanceUnit from, Units::DistanceUnit to) {
+            if (from == Units::UNITTYPE_UNKNOWN || to == Units::UNITTYPE_UNKNOWN || from == to) {
                 return 1.0;
             }
 
@@ -88,57 +80,44 @@ namespace MaterialX
     }  // anonymous namespace
 
     
-    const std::string& Units::unitName(EUnit unit) {
-        return kUnitNames[unit];
+    const std::string& Units::unitName(DistanceUnit unit) {
+        return kDistanceUnitNames[unit];
     }
 
-    Units::EUnit Units::toUnit(const std::string& str) {
+    Units::DistanceUnit Units::toUnit(const std::string& str) {
         if (str == "mm" || str == "millimeter") {
-            return E_UNIT_MM;
+            return UNITTYPE_MM;
         }
         if (str == "cm" || str == "centimeter") {
-            return E_UNIT_CM;
+            return UNITTYPE_CM;
         }
         if (str == "m" || str == "meter") {
-            return E_UNIT_M;
+            return UNITTYPE_M;
         }
         if (str == "km" || str == "kilometer") {
-            return E_UNIT_KM;
+            return UNITTYPE_KM;
         }
-
         if (str == "in" || str == "inch") {
-            return E_UNIT_INCH;
+            return UNITTYPE_INCH;
         }
         if (str == "ft" || str == "foot") {
-            return E_UNIT_FOOT;
+            return UNITTYPE_FOOT;
         }
         if (str == "mi" || str == "mile") {
-            return E_UNIT_MILE;
+            return UNITTYPE_MILE;
         }
-
-        if (str == "deg" || str == "degree") {
-            return E_UNIT_DEGREE;
-        }
-        if (str == "rad" || str == "radian") {
-            return E_UNIT_RADIAN;
-        }
-
-        if (str == "cd/m^2") {
-            return E_UNIT_CD_PER_M2;
-        }
-
         if (str == "") {
-            return E_UNIT_DIMENSIONLESS;
+            return UNITTYPE_UNKNOWN;
         }
 
         throw ExceptionTypeError("Unrecognized property unit: " +  str);
     }
 
-    double Units::convertUnit(double v, EUnit from, EUnit to) {
+    double Units::convertUnit(double v, DistanceUnit from, DistanceUnit to) {
         return v * unitRatio(from, to);
     }
 
-    Vector3 Units::convertUnit(Vector3 v, Units::EUnit from, Units::EUnit to) {
+    Vector3 Units::convertUnit(Vector3 v, Units::DistanceUnit from, Units::DistanceUnit to) {
         double ratio = unitRatio(from, to);
         for (int i = 0; i < 3; ++i) {
             v[i] = static_cast<float>(ratio * v[i]);
@@ -146,7 +125,7 @@ namespace MaterialX
         return v;
     }
 
-    void Units::convertUnit(std::vector<float>* v, EUnit from, EUnit to) {
+    void Units::convertUnit(std::vector<float>* v, DistanceUnit from, DistanceUnit to) {
         double ratio = unitRatio(from, to);
         for (float& f : *v) {
             f = static_cast<float>(ratio * f);

@@ -33,10 +33,10 @@ class DefaultUnitSystem : public UnitSystem
     /// Return the DefaultUnitSystem name
     const string& getName() const override
     {
-        return DefaultUnitSystem::US_NAME;
+        return DefaultUnitSystem::UNITSYTEM_NAME;
     }
 
-    static const string US_NAME;
+    static const string UNITSYTEM_NAME;
 
   protected:
     /// Returns an implementation name for a given transform
