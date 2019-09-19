@@ -17,8 +17,8 @@
  * @brief Units declaration.
  */
 
-#ifndef MATERIALX_UNITS_H_
-#define MATERIALX_UNITS_H_
+#ifndef MATERIALX_SHADER_UNITS_H_
+#define MATERIALX_SHADER_UNITS_H_
 
 #include <MaterialXCore/Library.h>
 
@@ -80,4 +80,4 @@ namespace MaterialX
 
 }  // namespace MaterialX
 
-#endif  // MATERIALX_UNITS_H_
+#endif  // MATERIALX_SHADER_UNITS_H_
