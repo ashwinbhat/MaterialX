@@ -15,6 +15,7 @@
 #include <MaterialXCore/Material.h>
 #include <MaterialXCore/Node.h>
 #include <MaterialXCore/Variant.h>
+#include <MaterialXCore/Units.h>
 
 namespace MaterialX
 {
@@ -557,6 +558,40 @@ class Document : public GraphElement
     virtual void disableCallbacks() { }
 
     /// @}
+    /// @name Unit support
+    /// @{
+
+    /// Return the NodeDef, if any, with the given name.
+    UnitTypeDefPtr getUnitTypeDef(const string& name) const
+    {
+        return getChildOfType<UnitTypeDef>(name);
+    }
+
+    /// Return a vector of all UnitTypeDef elements in the document.
+    vector<UnitTypeDefPtr> getUnitTypeDefs() const
+    {
+        return getChildrenOfType<UnitTypeDef>();
+    }
+
+    /// Remove the NodeDef, if any, with the given name.
+    void removeUnitTypeDef(const string& name)
+    {
+        removeChildOfType<UnitTypeDef>(name);
+    }
+
+    /// Add a unit converter for a given UnitTypeDef.
+    bool addUnitConverter(UnitTypeDefPtr def, UnitConverterPtr converter);
+
+    /// Remove a unit converter for a given UnitTypeDef.
+    bool removeUnitConverter(UnitTypeDefPtr def);
+
+    /// Get a unit converter for a given UnitTypeDef
+    UnitConverterPtr getUnitConverter(UnitTypeDefPtr def);
+
+    /// Clear all unit converters.
+    void clearUnitConverters();
+
+    /// @}
 
   public:
     static const string CATEGORY;
@@ -566,6 +601,7 @@ class Document : public GraphElement
   private:
     class Cache;
     std::unique_ptr<Cache> _cache;
+    std::unordered_map<string, UnitConverterPtr> _unitConverters;
 };
 
 /// @class ScopedUpdate
