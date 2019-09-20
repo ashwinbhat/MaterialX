@@ -14,10 +14,9 @@
 #include <MaterialXGenShader/ShaderNode.h>
 #include <MaterialXGenShader/ShaderNodeImpl.h>
 #include <MaterialXGenShader/TypeDesc.h>
-#include <MaterialXGenShader/Units.h>
 
 #include <MaterialXCore/Document.h>
-
+#include <array>
 namespace MaterialX
 {
 
@@ -46,20 +45,37 @@ struct UnitTransform
 
     string measurementType() const
     {
-        Units::DistanceUnit sourceType = Units::toUnit(sourceUnit);
-        if ((Units::UNITTYPE_MM <= sourceType && sourceType <= Units::UNITTYPE_MILE))
             return "distance_unit";
-        else
-            return "unknown_unit";
+    }
+
+    size_t encodeUnit(std::string unitstring) const
+    {
+        static const std::array <std::string, 10> lengthUnits{
+        "nanometer",
+        "micron",
+        "millimeter",
+        "centimeter",
+        "meter",
+        "kilometer",
+        "foot",
+        "inch",
+        "yard",
+        "mile"
+        };
+
+        size_t index = std::distance(lengthUnits.begin(),
+            std::find(lengthUnits.begin(), lengthUnits.end(), unitstring));
+        //std::cout << "Index: " << index << std::endl;
+        return index;
     }
     float encodeSourceUnit() const
     {
-        return ((float)Units::toUnit(sourceUnit));
+        return ((float)encodeUnit(sourceUnit));
     }
 
     float encodeTargetUnit() const
     {
-        return ((float)Units::toUnit(targetUnit));
+        return ((float)encodeUnit(targetUnit));
     }
 };
 

@@ -75,23 +75,11 @@ TEST_CASE("Length", "[units]")
 
 TEST_CASE("Units Test", "[unitstesting]")
 {
-    mx::Units::DistanceUnit sceneUnit = mx::Units::UNITTYPE_FOOT;
-
-    bool _needsValidation = false;
     mx::FilePath libraryPath("libraries/stdlib");
     mx::FilePath examplesPath("resources/Materials/Examples/Units");
     std::string searchPath = libraryPath.asString() +
         mx::PATH_LIST_SEPARATOR +
         examplesPath.asString();
-
-    // Read the standard library.
-    std::vector<mx::DocumentPtr> libs;
-    for (std::string filename : libraryPath.getFilesInDirectory(mx::MTLX_EXTENSION))
-    {
-        mx::DocumentPtr lib = mx::createDocument();
-        mx::readFromXmlFile(lib, filename, searchPath);
-        libs.push_back(lib);
-    }
 
     // Read and validate each example document.
     for (std::string filename : examplesPath.getFilesInDirectory(mx::MTLX_EXTENSION))
@@ -99,23 +87,26 @@ TEST_CASE("Units Test", "[unitstesting]")
         mx::DocumentPtr doc = mx::createDocument();
         mx::readFromXmlFile(doc, filename, searchPath);
 
-        if (_needsValidation)
-        {
-            for (mx::DocumentPtr lib : libs)
-            {
-                doc->importLibrary(lib);
-            }
-            std::string message;
-            bool docValid = doc->validate(&message);
-            if (!docValid)
-            {
-                WARN("[" + filename + "] " + message);
-            }
-            REQUIRE(docValid);
-        }
+        //for (std::string libraryName : libraryPath.getFilesInDirectory(mx::MTLX_EXTENSION))
+        //{
+        //    mx::loadLibrary(mx::FilePath::getCurrentPath() + mx::PATH_LIST_SEPARATOR + libraryPath + mx::PATH_LIST_SEPARATOR + libraryName, doc);
+        //}
+        mx::loadLibrary(mx::FilePath::getCurrentPath() / mx::FilePath("libraries/stdlib/stdlib_defs.mtlx"), doc);
+
+        mx::UnitTypeDefPtr lengthTypeDef = doc->getUnitTypeDef("length");
+        REQUIRE(lengthTypeDef);
+
+        mx::UnitConverterPtr converter = mx::LengthUnitConverter::create(lengthTypeDef);
+        REQUIRE(converter);
+        doc->addUnitConverter(lengthTypeDef, converter);
+        converter = doc->getUnitConverter(lengthTypeDef);
+        REQUIRE(converter);
+        
 
         // Traverse the document tree
-        int valueElementCount = 0;
+
+        std::cout << "Default unit is:" << lengthTypeDef->getDefault() << std::endl;
+        
         for (mx::ElementPtr elem : doc->traverseTree())
         {
             // If we have nodes with inputs
@@ -135,13 +126,13 @@ TEST_CASE("Units Test", "[unitstesting]")
                                   << "input_type: " << type->getName() << std::endl
                                   << "input_value:" << value_string << std::endl;
 
-                        if (input->hasUnit()) {
-                            std::cout << "input_unit_type: " << input->getUnit() << std::endl;
+                        if (input->hasUnitString()) {
+                            std::cout << "input_unit_type: " << input->getUnitString() << std::endl;
 
                             if (type->isScalar() && value)
                             {
                                 float val = value->asA<float>();
-                                float cval = (float) mx::Units::convertUnit(val, mx::Units::UNITTYPE_M, sceneUnit);
+                                float cval = converter->convert(val, input->getUnitString(), lengthTypeDef->getDefault());
                                 std::cout << "converted_value:" << cval << std::endl;
                             }
                         }
@@ -158,49 +149,21 @@ TEST_CASE("Units Test", "[unitstesting]")
                             << "param_type: " << type->getName() << std::endl
                             << "param_value: " << param->getValueString() << std::endl;
 
-                        if (param->hasUnit()) {
-                            std::cout << "param_unit_type: " << param->getUnit() << std::endl;
-
-                            mx::Units::DistanceUnit valUnit = mx::Units::toUnit(param->getUnit());
+                        if (param->hasUnitString()) {
+                            std::cout << "param_unit_type: " << param->getUnitString() << std::endl;
 
                             if (type->isScalar() && value)
                             {
                                 float val = value->asA<float>();
-                                float cval = (float)mx::Units::convertUnit(val, mx::Units::UNITTYPE_M, sceneUnit);
-                                std::cout << "From: " << mx::Units::unitName(valUnit) << std::endl
-                                    << "To: " << mx::Units::unitName(sceneUnit) << std::endl
+                                float cval = converter->convert(val, param->getUnitString(), lengthTypeDef->getDefault());
+                                std::cout << "From: " + param->getUnitString() << std::endl
+                                    << "To: " << lengthTypeDef->getDefault() << std::endl
                                     << "converted_value: " << cval << std::endl;
                             }
                         }
                     }
                 }
             }
-        }
-        REQUIRE(valueElementCount > 0);
-
-        // Traverse the dataflow graph from each shader parameter and input
-        // to its source nodes.
-        for (mx::MaterialPtr material : doc->getMaterials())
-        {
-            REQUIRE(material->getPrimaryShaderNodeDef());
-            int edgeCount = 0;
-            for (mx::ParameterPtr param : material->getPrimaryShaderParameters())
-            {
-                REQUIRE(param->getBoundValue(material));
-                for (mx::Edge edge : param->traverseGraph(material))
-                {
-                    edgeCount++;
-                }
-            }
-            for (mx::InputPtr input : material->getPrimaryShaderInputs())
-            {
-                REQUIRE((input->getBoundValue(material) || input->getUpstreamElement(material)));
-                for (mx::Edge edge : input->traverseGraph(material))
-                {
-                    edgeCount++;
-                }
-            }
-            REQUIRE(edgeCount > 0);
         }
     }
 }

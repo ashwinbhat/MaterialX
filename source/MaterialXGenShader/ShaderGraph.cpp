@@ -531,8 +531,7 @@ ShaderGraphPtr ShaderGraph::create(const ShaderGraph* parent, const string& name
                     graph->populateInputColorTransformMap(colorManagementSystem, graph->_nodeMap[newNodeName], bindParam, targetColorSpace);
 
                     UnitSystemPtr unitSystem = context.getShaderGenerator().getUnitSystem();
-                    const string& targetUnit = context.getOptions().targetUnitOverride.empty() ?
-                        element->getDocument()->getActiveUnit() : context.getOptions().targetUnitOverride;
+                    const string& targetUnit = context.getOptions().targetUnitOverride.empty() ? "foot" : context.getOptions().targetUnitOverride;
 
                     graph->populateInputUnitTransformMap(unitSystem, graph->_nodeMap[newNodeName], bindParam, targetUnit);
                     std::cout << "PARAMETER Target Unit :" << targetUnit << std::endl;
@@ -574,7 +573,7 @@ ShaderGraphPtr ShaderGraph::create(const ShaderGraph* parent, const string& name
 
                     UnitSystemPtr unitSystem = context.getShaderGenerator().getUnitSystem();
                     const string& targetUnit = context.getOptions().targetUnitOverride.empty() ?
-                        element->getDocument()->getActiveUnit() : context.getOptions().targetUnitOverride;
+                        "foot" : context.getOptions().targetUnitOverride;
 
                     graph->populateInputUnitTransformMap(unitSystem, graph->_nodeMap[newNodeName], bindInput, targetUnit);
                     std::cout << "BINDINPUT Target Unit :" << targetUnit << std::endl;
@@ -767,7 +766,7 @@ ShaderNode* ShaderGraph::addNode(const Node& node, GenContext& context)
     //Unit System:
     UnitSystemPtr unitSystem = context.getShaderGenerator().getUnitSystem();
     const string& targetUnit = context.getOptions().targetUnitOverride.empty() ?
-        _document->getActiveUnit() : context.getOptions().targetUnitOverride;
+        "foot" : context.getOptions().targetUnitOverride;
 
     if (unitSystem && !targetUnit.empty())
     {
@@ -1243,7 +1242,7 @@ void ShaderGraph::populateInputColorTransformMap(ColorManagementSystemPtr colorM
 void ShaderGraph::populateInputUnitTransformMap(UnitSystemPtr unitSystem, ShaderNodePtr shaderNode, ValueElementPtr input, const string& targetUnitSpace)
 {
     ShaderInput* shaderInput = shaderNode->getInput(input->getName());
-    const string& sourceUnitSpace = input->getUnit();
+    const string& sourceUnitSpace = input->getUnitString();
     if (shaderInput && !sourceUnitSpace.empty())
     {
         if (shaderInput->getType() != Type::COLOR2 &&

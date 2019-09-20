@@ -16,7 +16,6 @@ const string Element::NAME_ATTRIBUTE = "name";
 const string Element::FILE_PREFIX_ATTRIBUTE = "fileprefix";
 const string Element::GEOM_PREFIX_ATTRIBUTE = "geomprefix";
 const string Element::COLOR_SPACE_ATTRIBUTE = "colorspace";
-const string Element::UNIT_ATTRIBUTE = "unit";
 const string Element::TARGET_ATTRIBUTE = "target";
 const string Element::VERSION_ATTRIBUTE = "version";
 const string Element::DEFAULT_VERSION_ATTRIBUTE = "isdefaultversion";
@@ -35,7 +34,6 @@ const string ValueElement::UI_FOLDER_ATTRIBUTE = "uifolder";
 const string ValueElement::UI_MIN_ATTRIBUTE = "uimin";
 const string ValueElement::UI_MAX_ATTRIBUTE = "uimax";
 const string ValueElement::UI_ADVANCED_ATTRIBUTE = "uiadvanced";
-
 
 Element::CreatorMap Element::_creatorMap;
 

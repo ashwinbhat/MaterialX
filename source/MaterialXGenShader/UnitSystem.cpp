@@ -5,6 +5,7 @@
 
 #include <MaterialXGenShader/UnitSystem.h>
 
+#include <MaterialXCore/Units.h>
 #include <MaterialXGenShader/GenContext.h>
 #include <MaterialXGenShader/ShaderGenerator.h>
 #include <MaterialXGenShader/Nodes/SourceCodeNode.h>
@@ -38,6 +39,7 @@ void UnitSystem::loadLibrary(DocumentPtr document)
 
 bool UnitSystem::supportsTransform(const UnitTransform& transform) const
 {
+    UnitTypeDefPtr lengthTypeDef = _document->getUnitTypeDef("length");
     const string implName = getImplementationName(transform);
     ImplementationPtr impl = _document->getImplementation(implName);
     return impl != nullptr;
