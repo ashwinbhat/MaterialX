@@ -69,7 +69,7 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
     ShaderNodePtr shaderNode = ShaderNode::create(parent, name, nodeImpl, ShaderNode::Classification::TEXTURE);
 
     // Create ports on the node.
-    ShaderInputPtr input(shaderNode->addInput("in", transform.type));
+    ShaderInput* input = shaderNode->addInput("in", transform.type);
     if (transform.type == Type::FLOAT)
     {
         input->setValue(Value::createValue(1.0));
@@ -92,11 +92,11 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
     }
 
     // Add the conversion code
-    ShaderInputPtr convertFrom(shaderNode->addInput("unit_from", Type::INTEGER));
+    ShaderInput* convertFrom = shaderNode->addInput("unit_from", Type::INTEGER);
     int from = transform.encodeSourceUnit();
     convertFrom->setValue(Value::createValue(from));
 
-    ShaderInputPtr convertTo(shaderNode->addInput("unit_to", Type::INTEGER));
+    ShaderInput* convertTo = shaderNode->addInput("unit_to", Type::INTEGER);
     int to = transform.encodeTargetUnit();
     convertTo->setValue(Value::createValue(to));
 
