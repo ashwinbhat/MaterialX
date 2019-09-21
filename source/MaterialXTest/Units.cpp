@@ -12,7 +12,6 @@
 #include <MaterialXFormat/XmlIo.h>
 #include <MaterialXGenShader/Util.h>
 #include <MaterialXGenShader/TypeDesc.h>
-#include <MaterialXGenShader/Units.h>
 
 #include <iostream>
 #include <cmath>

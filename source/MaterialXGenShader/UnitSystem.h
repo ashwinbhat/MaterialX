@@ -68,14 +68,14 @@ struct UnitTransform
         //std::cout << "Index: " << index << std::endl;
         return index;
     }
-    float encodeSourceUnit() const
+    int encodeSourceUnit() const
     {
-        return ((float)encodeUnit(sourceUnit));
+        return encodeUnit(sourceUnit);
     }
 
-    float encodeTargetUnit() const
+    int encodeTargetUnit() const
     {
-        return ((float)encodeUnit(targetUnit));
+        return encodeUnit(targetUnit);
     }
 };
 
