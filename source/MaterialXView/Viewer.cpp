@@ -204,6 +204,10 @@ Viewer::Viewer(const mx::FilePathVec& libraryFolders,
     _uvTranslation(-0.5f, 0.5f, 0.0f),
     _uvZoom(1.0f)
 {
+
+    // Set default unit
+    _unitspace = "meter";
+    
     // Transpary option before creating Advanced UI 
     // as this flag is used to set the default value.
     _genContext.getOptions().hwTransparency = true;
@@ -256,8 +260,6 @@ Viewer::Viewer(const mx::FilePathVec& libraryFolders,
         }
     });
 
-    // Set default unit
-    _unitspace = "foot";
 
     // Set default generator options.
     _genContext.getOptions().hwSpecularEnvironmentMethod = _specularEnvironmentMethod;
@@ -666,19 +668,28 @@ void Viewer::createAdvancedSettings(Widget* parent)
 
        
         {
+            //TODO: Need a get supported units
             mProcessEvents = false;
+            unitOptions.push_back("nanometer");
+            unitOptions.push_back("micron");
             unitOptions.push_back("millimeter");
             unitOptions.push_back("centimeter");
             unitOptions.push_back("meter");
             unitOptions.push_back("kilometer");
-            unitOptions.push_back("inch");
             unitOptions.push_back("foot");
+            unitOptions.push_back("inch");
+            unitOptions.push_back("yard");
             unitOptions.push_back("mile");
             mProcessEvents = true;
         }
         ng::ComboBox* sampleBox = new ng::ComboBox(sampleGroup, unitOptions);
         sampleBox->setChevronIcon(-1);
-        sampleBox->setSelectedIndex(0);
+
+        size_t index = std::distance(unitOptions.begin(),
+                                     std::find(unitOptions.begin(),
+                                               unitOptions.end(),
+                                               _unitspace));
+        sampleBox->setSelectedIndex(index);
         sampleBox->setCallback([this](int index)
         {
             _unitspace = unitOptions[index];
