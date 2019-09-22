@@ -689,7 +689,7 @@ void Viewer::createAdvancedSettings(Widget* parent)
                                      std::find(unitOptions.begin(),
                                                unitOptions.end(),
                                                _unitspace));
-        sampleBox->setSelectedIndex(index);
+        sampleBox->setSelectedIndex((int)index);
         sampleBox->setCallback([this](int index)
         {
             _unitspace = unitOptions[index];

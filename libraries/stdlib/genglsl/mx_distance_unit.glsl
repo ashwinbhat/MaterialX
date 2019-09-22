@@ -1,35 +1,29 @@
 
-#define DISTANCE_UNITS 10
-uniform float u_distance_unit_scales[DISTANCE_UNITS] = float[](
-    1000000000.0, 
-    1000000.0,
-    1000.0,
-    100.0,
-    1.0,
-    0.001,
-    3.281,
-    39.37,
-    1.093613,
-    0.000621
-);
-
-float unit_ratio(int unit_from, int unit_to) {
-    //Decode _unit.x (from) --> _unit.y (to)
-    return (u_distance_unit_scales[unit_from] / u_distance_unit_scales[unit_to]);
+#define MAX_DISTANCE_UNITS 10
+void mx_distance_unit_float(float _in, int _unit_from, int _unit_to,
+                            float _convert_table[MAX_DISTANCE_UNITS],
+                            float result) {
+  float unit_ratio = (_convert_table[_unit_from] / _convert_table[_unit_to]);
+  result = _in * unit_ratio;
 }
 
-void mx_distance_unit_float(float _in , int _unit_from, int _unit_to, out float result) {
-    result = _in * unit_ratio(_unit_from, _unit_to);
+void mx_distance_unit_vector2(vec2 _in, int _unit_from, int _unit_to,
+                              float _convert_table[MAX_DISTANCE_UNITS],
+                              out vec2 result) {
+  float unit_ratio = (_convert_table[_unit_from] / _convert_table[_unit_to]);
+  result = _in * unit_ratio;
 }
 
-void mx_distance_unit_vector2(vec2 _in , int _unit_from, int _unit_to, out vec2 result) {
-    result = _in * unit_ratio(_unit_from, _unit_to);
+void mx_distance_unit_vector3(vec3 _in, int _unit_from, int _unit_to,
+                              float _convert_table[MAX_DISTANCE_UNITS],
+                              out vec3 result) {
+  float unit_ratio = (_convert_table[_unit_from] / _convert_table[_unit_to]);
+  result = _in * unit_ratio;
 }
 
-void mx_distance_unit_vector3(vec3 _in , int _unit_from, int _unit_to, out vec3 result) {
-    result = _in * unit_ratio(_unit_from, _unit_to);
-}
-
-void mx_distance_unit_vector4(vec4 _in , int _unit_from, int _unit_to, out vec4 result) {
-    result = _in * unit_ratio(_unit_from, _unit_to);
+void mx_distance_unit_vector4(vec4 _in, int _unit_from, int _unit_to,
+                              float _convert_table[MAX_DISTANCE_UNITS],
+                              out vec4 result) {
+  float unit_ratio = (_convert_table[_unit_from] / _convert_table[_unit_to]);
+  result = _in * unit_ratio;
 }

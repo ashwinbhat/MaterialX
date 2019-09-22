@@ -90,6 +90,8 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
     {
         throw ExceptionShaderGenError("Invalid type specified to createColorTransform: '" + transform.type->getName() + "'");
     }
+    
+
 
     // Add the conversion code
     ShaderInput* convertFrom = shaderNode->addInput("unit_from", Type::INTEGER);
@@ -99,6 +101,22 @@ ShaderNodePtr UnitSystem::createNode(const ShaderGraph* parent, const UnitTransf
     ShaderInput* convertTo = shaderNode->addInput("unit_to", Type::INTEGER);
     int to = transform.encodeTargetUnit();
     convertTo->setValue(Value::createValue(to));
+
+    ShaderInput* convertTable = shaderNode->addInput("convert_table", Type::FLOATARRAY);
+    std::vector<float> convet_table =
+    {
+        1000000000.0f,
+        1000000.0f,
+        1000.0f,
+        100.0f,
+        1.0f,
+        0.001f,
+        3.281f,
+        39.37f,
+        1.093613f,
+        0.000621f
+    };
+    convertTable->setValue(Value::createValue<std::vector<float>>(convet_table));
 
     shaderNode->addOutput("out", transform.type);
 

@@ -48,7 +48,7 @@ struct UnitTransform
             return "distance_unit";
     }
 
-    size_t encodeUnit(std::string unitstring) const
+    int encodeUnit(std::string unitstring) const
     {
         static const std::array <std::string, 10> lengthUnits{
         "nanometer",
@@ -66,7 +66,7 @@ struct UnitTransform
         size_t index = std::distance(lengthUnits.begin(),
             std::find(lengthUnits.begin(), lengthUnits.end(), unitstring));
         //std::cout << "Index: " << index << std::endl;
-        return index;
+        return (int) index;
     }
     int encodeSourceUnit() const
     {
