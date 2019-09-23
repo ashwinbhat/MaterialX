@@ -19,7 +19,7 @@
 
 #include <MaterialXCore/Util.h>
 #include <MaterialXCore/Value.h>
-#include <MaterialXCore/Units.h>
+#include <MaterialXCore/UnitConverter.h>
 
 namespace MaterialX
 {
@@ -47,11 +47,11 @@ LengthUnitConverter::LengthUnitConverter(UnitTypeDefPtr unitTypeDef)
     // In case the default unit was not specified in the unittypedef explicit
     // add this to be able to accept converstion with the default 
     // as the output unit
-    const string& defaultUnit = unitTypeDef->getDefault();
-    auto it = _unitScale.find(defaultUnit);
+    _defaultUnit = unitTypeDef->getDefault();
+    auto it = _unitScale.find(_defaultUnit);
     if (it == _unitScale.end())
     {
-        _unitScale[defaultUnit] = 1.0f;
+        _unitScale[_defaultUnit] = 1.0f;
     }
 }
 
