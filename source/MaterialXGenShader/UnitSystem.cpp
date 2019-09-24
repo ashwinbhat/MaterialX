@@ -5,7 +5,7 @@
 
 #include <MaterialXGenShader/UnitSystem.h>
 
-#include <MaterialXCore/Units.h>
+#include <MaterialXCore/UnitConverter.h>
 #include <MaterialXGenShader/GenContext.h>
 #include <MaterialXGenShader/ShaderGenerator.h>
 #include <MaterialXGenShader/Nodes/SourceCodeNode.h>
