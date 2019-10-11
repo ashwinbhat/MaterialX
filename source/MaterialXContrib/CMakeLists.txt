@@ -20,10 +20,14 @@ set_target_properties(
     VERSION "${MATERIALX_LIBRARY_VERSION}"
     SOVERSION "${MATERIALX_MAJOR_VERSION}"
 <<<<<<< HEAD
+<<<<<<< HEAD
     DEBUG_POSTFIX ${MATERIALX_DEBUG_POSTFIX})
 =======
     DEBUG_POSTFIX "d")
 >>>>>>> Update configurations to add DEBUG build qualifier
+=======
+    DEBUG_POSTFIX ${MATERIALX_DEBUG_POSTFIX})
+>>>>>>> Use MATERIALX_DEBUG_POSTFIX setting to define DEBUG_POSTFIX
 
 target_link_libraries(
     MaterialXContrib
