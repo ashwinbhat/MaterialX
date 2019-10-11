@@ -35,7 +35,11 @@ add_executable(MaterialXView ${materialx_source} ${materialx_headers})
 
 set_target_properties(
     MaterialXView PROPERTIES
+<<<<<<< HEAD
     DEBUG_POSTFIX ${MATERIALX_DEBUG_POSTFIX})
+=======
+    DEBUG_POSTFIX "d")
+>>>>>>> Update configurations to add DEBUG build qualifier
 
 target_link_libraries(
     MaterialXView
