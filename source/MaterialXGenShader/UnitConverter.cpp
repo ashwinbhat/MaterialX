@@ -161,7 +161,7 @@ bool UnitConverterRegistry::removeUnitConverter(UnitTypeDefPtr def)
     return true;
 }
 
-UnitConverterPtr UnitConverterRegistry::getUnitConverter(UnitTypeDefPtr def)
+UnitConverterPtr UnitConverterRegistry::getUnitConverter(UnitTypeDefPtr def) const
 {
     const string& name = def->getName();
     auto it = _unitConverters.find(name);
@@ -172,6 +172,16 @@ UnitConverterPtr UnitConverterRegistry::getUnitConverter(UnitTypeDefPtr def)
     return nullptr;
 }
 
+vector<UnitConverterPtr> UnitConverterRegistry::getUnitConverters() const
+{
+    std::vector<UnitConverterPtr> unitConverters;
+    for (auto const &it : _unitConverters) 
+    {
+        unitConverters.push_back(it.second);
+    }
+    return unitConverters;
+}
+
 void UnitConverterRegistry::clearUnitConverters()
 {
     _unitConverters.clear();
@@ -179,7 +189,7 @@ void UnitConverterRegistry::clearUnitConverters()
 
 int UnitConverterRegistry::getUnitAsInteger(const string& unitName) const
 {
-    for (auto it : _unitConverters)
+    for (auto const &it : _unitConverters)
     {
         int value = it.second->getUnitAsInteger(unitName);
         if (value >= 0)

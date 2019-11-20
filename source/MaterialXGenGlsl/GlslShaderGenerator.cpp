@@ -36,6 +36,7 @@
 #include <MaterialXGenShader/Nodes/CompareNode.h>
 #include <MaterialXGenShader/Nodes/BlurNode.h>
 #include <MaterialXGenShader/Nodes/HwImageNode.h>
+#include <MaterialXGenShader/Nodes/ScalarUnitNode.h>
 
 namespace MaterialX
 {
@@ -260,6 +261,8 @@ GlslShaderGenerator::GlslShaderGenerator() :
 
     _lightSamplingNodes.push_back(ShaderNode::create(nullptr, "numActiveLightSources", NumLightsNodeGlsl::create()));
     _lightSamplingNodes.push_back(ShaderNode::create(nullptr, "sampleLightSource", LightSamplerNodeGlsl::create()));
+
+    _helperFunctionNodes.push_back(ShaderNode::create(nullptr, "mx_distance_unit_ratio", ScalarUnitNode::create()));
 }
 
 ShaderPtr GlslShaderGenerator::generate(const string& name, ElementPtr element, GenContext& context) const
@@ -564,6 +567,12 @@ BEGIN_SHADER_STAGE(stage, Stage::PIXEL)
         {
             emitFunctionDefinition(*it, context, stage);
         }
+    }
+
+    // Emit helper functions 
+    for (const auto& it : _helperFunctionNodes)
+    {
+        emitFunctionDefinition(*it, context, stage);
     }
 END_SHADER_STAGE(stage, Stage::PIXEL)
 

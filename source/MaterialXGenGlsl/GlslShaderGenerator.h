@@ -76,6 +76,9 @@ class GlslShaderGenerator : public HwShaderGenerator
 
     /// Nodes used internally for light sampling.
     vector<ShaderNodePtr> _lightSamplingNodes;
+
+    /// Nodes used for generating global helper functions 
+    vector<ShaderNodePtr> _helperFunctionNodes;
 };
 
 

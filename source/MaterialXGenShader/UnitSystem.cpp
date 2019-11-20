@@ -14,65 +14,7 @@
 namespace MaterialX
 {
 
-// Helper class to create the constant block for mx_<unittype>_unit
-class ScalarUnitNode : public SourceCodeNode
-{
-  public:
-    explicit ScalarUnitNode(LinearUnitConverterPtr scalarUnitConverter) :
-        _scalarUnitConverter(scalarUnitConverter)
-    {
-    }
 
-    static ShaderNodeImplPtr create(LinearUnitConverterPtr scalarUnitConverter);
-
-    void emitFunctionDefinition(const ShaderNode& node, GenContext& context, ShaderStage& stage) const override;
-
-  protected:
-    LinearUnitConverterPtr _scalarUnitConverter;
-};
-
-ShaderNodeImplPtr ScalarUnitNode::create(LinearUnitConverterPtr scalarUnitConverter)
-{
-    return std::make_shared<ScalarUnitNode>(scalarUnitConverter);
-}
-
-void ScalarUnitNode::emitFunctionDefinition(const ShaderNode& node, GenContext& context, ShaderStage& stage) const
-{
-    // Emit the helper funtion mx_<unittype>_unit_ratio that embeds a look up table for unit scale
-    vector<float> unitScales;
-    unitScales.reserve(_scalarUnitConverter->getUnitScale().size());
-    auto unitScaleMap = _scalarUnitConverter->getUnitScale();
-    unitScales.resize(unitScaleMap.size());
-    for (auto unitScale : unitScaleMap)
-    {
-        int location = _scalarUnitConverter->getUnitAsInteger(unitScale.first);
-        unitScales[location] = unitScale.second;
-    }
-    // See stdlib/gen*/mx_<unittype>_unit. This helper function is called by these shaders.
-    const string VAR_UNIT_SCALE = "u_" + _scalarUnitConverter->getUnitType() + "_unit_scales";
-    VariableBlock unitLUT("unitLUT", EMPTY_STRING);
-    ScopedFloatFormatting fmt(Value::FloatFormatFixed, 15);
-    unitLUT.add(Type::FLOATARRAY, VAR_UNIT_SCALE, Value::createValue<vector<float>>(unitScales));
-
-    BEGIN_SHADER_STAGE(stage, Stage::PIXEL)
-    const ShaderGenerator& shadergen = context.getShaderGenerator();
-    shadergen.emitString("float mx_" + _scalarUnitConverter->getUnitType() + "_unit_ratio(int unit_from, int unit_to)", stage);
-    shadergen.emitLineBreak(stage);
-    shadergen.emitScopeBegin(stage);
-
-    shadergen.emitLineBreak(stage);
-    shadergen.emitVariableDeclarations(unitLUT, shadergen.getSyntax().getConstantQualifier(), ";", context, stage, true);
-
-    shadergen.emitLineBreak(stage);
-    shadergen.emitString("return ("+ VAR_UNIT_SCALE + "[unit_from] / " + VAR_UNIT_SCALE + "[unit_to]);", stage);
-    shadergen.emitLineBreak(stage);
-    shadergen.emitScopeEnd(stage);
-    shadergen.emitLineBreak(stage);
-    END_SHADER_STAGE(shader, Stage::PIXEL)
-
-    // Emit registered implementation
-    SourceCodeNode::emitFunctionDefinition(node, context, stage);
-}
 
 //
 // Unit transform methods
@@ -152,10 +94,19 @@ ShaderNodePtr UnitSystem::createNode(ShaderGraph* parent, const UnitTransform& t
     ShaderNodeImplPtr nodeImpl = context.findNodeImplementation(implName);
     if (!nodeImpl)
     {
-        nodeImpl = ScalarUnitNode::create(scalarConverter);
+        nodeImpl = SourceCodeNode::create();
         nodeImpl->initialize(*impl, context);
         context.addNodeImplementation(implName, nodeImpl);
     }
+
+    // Add helper node 
+    //ShaderNodeImplPtr distancenodehelperImpl = context.findNodeImplementation(ScalarUnitNode::SCALAR_UNIT_FUNCTION);
+    /*if (!distancenodehelperImpl)
+    {
+        distancenodehelperImpl = ScalarUnitNode::create(scalarConverter);
+        distancenodehelperImpl->initialize(*impl, context);
+        context.addNodeImplementation(distancenodehelperImpl->getName(), nodeImpl);
+    }*/
 
     // Create the node.
     ShaderNodePtr shaderNode = ShaderNode::create(parent, name, nodeImpl, ShaderNode::Classification::TEXTURE);

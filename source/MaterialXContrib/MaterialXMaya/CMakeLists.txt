@@ -94,15 +94,7 @@ if (EXISTS "${MAYA_DEBUG_DIR}" OR EXISTS "${MAYA_RELEASE_DIR}")
         SOVERSION ${MATERIALX_NODE_VERSION}
         PREFIX ""
         SUFFIX ".mll"
-<<<<<<< HEAD
-<<<<<<< HEAD
         DEBUG_POSTFIX ${MATERIALX_DEBUG_POSTFIX}
-=======
-        DEBUG_POSTFIX "d"
->>>>>>> Update configurations to add DEBUG build qualifier
-=======
-        DEBUG_POSTFIX ${MATERIALX_DEBUG_POSTFIX}
->>>>>>> Use MATERIALX_DEBUG_POSTFIX setting to define DEBUG_POSTFIX
     )
 
     include_directories(

@@ -176,7 +176,9 @@ class UnitConverterRegistry
 
     /// Get a unit converter for a given UnitDef
     /// Returns any empty pointer if a converter does not exist for the given UnitDef 
-    UnitConverterPtr getUnitConverter(UnitTypeDefPtr def);
+    UnitConverterPtr getUnitConverter(UnitTypeDefPtr def) const;
+
+    vector<UnitConverterPtr> getUnitConverters() const;
 
     /// Clear all unit converters from the registry.
     void clearUnitConverters();
