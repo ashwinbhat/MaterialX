@@ -70,6 +70,17 @@ enum HwTransmissionRenderMethod
     TRANSMISSION_OPACITY,
 };
 
+/// Layout strategy for hardware uniform bindings
+enum HwUniformLayout
+{
+    /// Each uniform gets its own individual binding (default for GLSL/MSL).
+    UNIFORM_LAYOUT_INDIVIDUAL,
+
+    /// Pack uniforms into per-block structs (PrivateUniforms, PublicUniforms).
+    /// Required by WGSL to stay within WebGPU binding limits.
+    UNIFORM_LAYOUT_STRUCT
+};
+
 /// @class GenOptions
 /// Class holding options to configure shader generation.
 class MX_GENSHADER_API GenOptions
@@ -98,6 +109,7 @@ class MX_GENSHADER_API GenOptions
         hwWriteAlbedoTable(false),
         hwWriteEnvPrefilter(false),
         hwImplicitBitangents(true),
+        hwUniformLayout(UNIFORM_LAYOUT_INDIVIDUAL),
         oslImplicitSurfaceShaderConversion(true),
         oslConnectCiWrapper(false)
     {
@@ -216,6 +228,11 @@ class MX_GENSHADER_API GenOptions
     /// Calculate fallback bitangents from existing normals and tangents
     /// inside the bitangent node.
     bool hwImplicitBitangents;
+
+    /// Sets the uniform binding layout strategy for HW shader targets.
+    /// UNIFORM_LAYOUT_INDIVIDUAL: each uniform has its own binding (default).
+    /// UNIFORM_LAYOUT_STRUCT: pack into per-block structs (e.g. for WGSL/WebGPU).
+    HwUniformLayout hwUniformLayout;
 
     // Enables OSL conversion of surfaceshader struct to closure color.
     // Defaults to true.

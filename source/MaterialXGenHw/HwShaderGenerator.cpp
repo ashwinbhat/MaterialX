@@ -469,4 +469,43 @@ void HwShaderGenerator::toVec4(TypeDesc type, string& variable) const
     }
 }
 
+void HwShaderGenerator::qualifyStructUniformAccess(GenContext& /*context*/, ShaderStage& /*stage*/) const
+{
+    // No-op by default.  Backends that use struct-packed UBOs
+    // (e.g. WGSL) override this to rename ShaderPort variables
+    // with their struct instance prefix (u_prv. / u_pub.).
+}
+
+void HwShaderGenerator::applyStructUniformTokenOverrides(GenContext& context, ShaderStage& stage) const
+{
+    if (context.getOptions().hwUniformLayout != UNIFORM_LAYOUT_STRUCT)
+        return;
+
+    // For each uniform block in the stage, override token substitutions
+    // so that $-token references resolve to struct-qualified names
+    // (e.g. $worldMatrix -> u_prv.u_worldMatrix).
+    for (const auto& it : stage.getUniformBlocks())
+    {
+        const VariableBlock& block = *it.second;
+        if (block.empty() || block.getName() == HW::LIGHT_DATA)
+            continue;
+
+        const string& inst = block.getInstance();
+        for (size_t i = 0; i < block.size(); ++i)
+        {
+            const ShaderPort* port = block[i];
+            const string& var = port->getVariable();
+            // Only process $-token variables (private uniforms).
+            if (var.empty() || var[0] != '$')
+                continue;
+            // Look up the base resolved name from the existing substitutions.
+            auto existing = _tokenSubstitutions.find(var);
+            if (existing != _tokenSubstitutions.end())
+            {
+                _tokenSubstitutions[var] = inst + "." + existing->second;
+            }
+        }
+    }
+}
+
 MATERIALX_NAMESPACE_END

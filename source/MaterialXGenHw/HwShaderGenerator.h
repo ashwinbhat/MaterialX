@@ -90,6 +90,19 @@ class MX_GENHW_API HwShaderGenerator : public ShaderGenerator
     /// Create and initialize a new HW shader for shader generation.
     virtual ShaderPtr createShader(const string& name, ElementPtr element, GenContext& context) const;
 
+    /// Qualify uniform port names for struct-packed access when the
+    /// hwUniformLayout option is set to UNIFORM_LAYOUT_STRUCT.
+    /// The default implementation is a no-op.  Backends that use
+    /// struct-packed UBOs (e.g. WGSL) override this to rename
+    /// ShaderPort variables with their struct instance prefix.
+    virtual void qualifyStructUniformAccess(GenContext& context, ShaderStage& stage) const;
+
+    /// Apply private-uniform $-token substitutions for struct-packed
+    /// access.  Called from generate() or emitUniforms() when
+    /// hwUniformLayout == UNIFORM_LAYOUT_STRUCT.  Maps tokens like
+    /// $envMatrix -> <structInstance>.<memberName>.
+    void applyStructUniformTokenOverrides(GenContext& context, ShaderStage& stage) const;
+
     void toVec4(TypeDesc type, string& variable) const;
 };
 
