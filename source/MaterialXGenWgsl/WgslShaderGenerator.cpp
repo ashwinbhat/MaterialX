@@ -206,6 +206,10 @@ ShaderPtr WgslShaderGenerator::generate(const string& name, ElementPtr element, 
         binding->initialize();
     }
 
+    // WGSL requires struct-packed uniforms to stay within WebGPU binding limits.
+    GenOptions& options = const_cast<GenOptions&>(context.getOptions());
+    options.hwUniformLayout = UNIFORM_LAYOUT_STRUCT;
+
     ShaderPtr shader = createShader(name, element, context);
     ScopedFloatFormatting fmt(Value::FloatFormatFixed);
 
@@ -223,12 +227,14 @@ ShaderPtr WgslShaderGenerator::generate(const string& name, ElementPtr element, 
     ShaderStage& vs = shader->getStage(Stage::VERTEX);
     setDataSemantics(vs.getOutputBlock(HW::VERTEX_DATA));
     emitVertexStage(shader->getGraph(), context, vs);
+    applyStructUniformTokenOverrides(context, vs);
     replaceTokens(_tokenSubstitutions, vs);
 
     // Pixel stage.
     ShaderStage& ps = shader->getStage(Stage::PIXEL);
     setDataSemantics(ps.getInputBlock(HW::VERTEX_DATA));
     emitPixelStage(shader->getGraph(), context, ps);
+    applyStructUniformTokenOverrides(context, ps);
     replaceTokens(_tokenSubstitutions, ps);
 
     return shader;
@@ -309,6 +315,45 @@ void WgslShaderGenerator::emitUniforms(GenContext& context, ShaderStage& stage) 
         if (uniforms.empty() || uniforms.getName() == HW::LIGHT_DATA)
             continue;
         binding->emitResourceBindings(context, uniforms, stage);
+    }
+
+    // After struct declarations are emitted, qualify public-uniform port
+    // names so downstream code references use struct member access.
+    qualifyStructUniformAccess(context, stage);
+}
+
+void WgslShaderGenerator::qualifyStructUniformAccess(GenContext& context, ShaderStage& stage) const
+{
+    if (context.getOptions().hwUniformLayout != UNIFORM_LAYOUT_STRUCT)
+        return;
+
+    // Rename public-uniform ShaderPort variables so that downstream code emits
+    // struct-qualified access (e.g. u_pub.SR_default_base) at the call site,
+    // removing the need for module-scope aliases.  Private-uniform tokens are
+    // handled separately via applyStructUniformTokenOverrides, so only
+    // public uniforms (whose names are NOT $-tokens) need renaming here.
+    auto qualifyBlock = [](VariableBlock& block) {
+        const string& inst = block.getInstance();
+        for (size_t i = 0; i < block.size(); ++i)
+        {
+            ShaderPort* port = block[i];
+            const TypeDesc type = port->getType();
+            if (type.isClosure() || type == Type::FILENAME)
+                continue;
+            const string& var = port->getVariable();
+            if (!var.empty() && var[0] == '$')
+                continue;
+            port->setVariable(inst + "." + var);
+        }
+    };
+
+    try
+    {
+        qualifyBlock(stage.getUniformBlock(HW::PUBLIC_UNIFORMS));
+    }
+    catch (const ExceptionShaderGenError&)
+    {
+        // Block may not exist on every stage (e.g. vertex).
     }
 }
 

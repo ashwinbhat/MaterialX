@@ -86,3 +86,52 @@ TEST_CASE("GenShader: WGSL Shader Generation", "[genwgsl]")
     }
     REQUIRE(generated > 0);
 }
+
+TEST_CASE("GenShader: WGSL Struct Uniform Layout", "[genwgsl]")
+{
+    mx::FileSearchPath searchPath = mx::getDefaultDataSearchPath();
+
+    mx::DocumentPtr doc = mx::createDocument();
+    mx::loadLibraries({ "libraries" }, searchPath, doc);
+
+    mx::FilePath examplePath = searchPath.find("resources/Materials/Examples/StandardSurface/standard_surface_default.mtlx");
+    REQUIRE(!examplePath.isEmpty());
+    mx::readFromXmlFile(doc, examplePath);
+
+    mx::ShaderGeneratorPtr generator = mx::WgslShaderGenerator::create();
+    mx::GenContext context(generator);
+    context.registerSourceCodeSearchPath(searchPath);
+    context.getOptions().hwSpecularEnvironmentMethod = mx::SPECULAR_ENVIRONMENT_FIS;
+    context.getOptions().hwMaxActiveLightSources = 1;
+
+    // The WGSL generator forces UNIFORM_LAYOUT_STRUCT; verify the output.
+    REQUIRE(context.getOptions().hwUniformLayout == mx::UNIFORM_LAYOUT_INDIVIDUAL);
+
+    std::vector<mx::TypedElementPtr> renderables = mx::findRenderableElements(doc);
+    REQUIRE(!renderables.empty());
+
+    const std::string name = mx::createValidName(renderables[0]->getNamePath());
+    mx::ShaderPtr shader = generator->generate(name, renderables[0], context);
+    REQUIRE(shader != nullptr);
+
+    // After generation, layout should have been promoted to STRUCT.
+    REQUIRE(context.getOptions().hwUniformLayout == mx::UNIFORM_LAYOUT_STRUCT);
+
+    const std::string& vertexCode = shader->getSourceCode(mx::Stage::VERTEX);
+    const std::string& pixelCode = shader->getSourceCode(mx::Stage::PIXEL);
+
+    // Vertex shader: struct definition and struct-qualified access.
+    REQUIRE(vertexCode.find("struct PrivateUniforms") != std::string::npos);
+    REQUIRE(vertexCode.find("u_prv.u_worldMatrix") != std::string::npos);
+    REQUIRE(vertexCode.find("u_prv.u_viewProjectionMatrix") != std::string::npos);
+
+    // Pixel shader: both private and public struct access.
+    REQUIRE(pixelCode.find("struct PrivateUniforms") != std::string::npos);
+    REQUIRE(pixelCode.find("struct PublicUniforms") != std::string::npos);
+    REQUIRE(pixelCode.find("u_prv.u_envMatrix") != std::string::npos);
+    REQUIRE(pixelCode.find("u_pub.SR_default_base") != std::string::npos);
+
+    // No module-scope const aliases should be present.
+    REQUIRE(vertexCode.find("const u_worldMatrix") == std::string::npos);
+    REQUIRE(pixelCode.find("const u_envMatrix") == std::string::npos);
+}

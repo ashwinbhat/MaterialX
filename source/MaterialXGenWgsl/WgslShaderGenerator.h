@@ -90,6 +90,10 @@ class MX_GENWGSL_API WgslShaderGenerator : public HwShaderGenerator
     /// Emit value/texture uniform resource bindings (skips the LightData block).
     virtual void emitUniforms(GenContext& context, ShaderStage& stage) const;
 
+    /// Override: qualify public-uniform port names with struct instance prefix
+    /// (e.g. SR_default_base -> u_pub.SR_default_base) for STRUCT layout.
+    void qualifyStructUniformAccess(GenContext& context, ShaderStage& stage) const override;
+
     /// Emit the LightData struct + uniform array binding and MAX_LIGHT_SOURCES constant.
     virtual void emitLightData(GenContext& context, ShaderStage& stage) const;
 
